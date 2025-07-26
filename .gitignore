@@ -1,0 +1,17 @@
+# Build artifacts
+*.exe
+*.obj
+*.o
+*.dll
+*.lib
+*.pdb
+*.ilk
+
+# CMake
+build/
+
+# VS Code settings
+.vscode/
+
+# Logs
+*.log
