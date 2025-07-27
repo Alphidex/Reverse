@@ -11,7 +11,14 @@ set(CMAKE_PREFIX_PATH "C:/Programs - Main/vcpkg/installed/x64-mingw-static")
 include_directories(include)
 
 # Add source
-add_executable(${PROJECT_NAME} main.cpp glad.c)
+add_executable(${PROJECT_NAME}
+    src/main.cpp
+    src/glad.c
+    src/EBO.cpp
+    src/VAO.cpp
+    src/VBO.cpp
+    src/shaderClass.cpp
+)
 
 # Find and link fmt
 find_package(fmt REQUIRED)
