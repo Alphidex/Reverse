@@ -18,6 +18,9 @@ add_executable(${PROJECT_NAME}
     src/VAO.cpp
     src/VBO.cpp
     src/shaderClass.cpp
+    src/stb.cpp
+    src/Texture.cpp
+    src/Camera.cpp
 )
 
 # Find and link fmt
