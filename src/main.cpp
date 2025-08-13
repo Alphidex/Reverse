@@ -130,21 +130,14 @@ int main() {
 
     // Shader for light cube
 	Shader lightShader("src/light.vert", "src/light.frag");
-	// Generates Vertex Array Object and binds it
 	VAO lightVAO;
 	lightVAO.Bind();
-	// Generates Vertex Buffer Object and links it to vertices
 	VBO lightVBO(lightVertices, sizeof(lightVertices));
-	// Generates Element Buffer Object and links it to indices
 	EBO lightEBO(lightIndices, sizeof(lightIndices));
-	// Links VBO attributes such as coordinates and colors to VAO
 	lightVAO.LinkAttrib(lightVBO, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
-	// Unbind all to prevent accidentally modifying them
 	lightVAO.Unbind();
 	lightVBO.Unbind();
 	lightEBO.Unbind();
-
-
 
 	glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
 	glm::vec3 lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
