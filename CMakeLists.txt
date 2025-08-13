@@ -14,13 +14,7 @@ include_directories(include)
 add_executable(${PROJECT_NAME}
     src/main.cpp
     src/glad.c
-    src/EBO.cpp
-    src/VAO.cpp
-    src/VBO.cpp
-    src/shaderClass.cpp
     src/stb.cpp
-    src/Texture.cpp
-    src/Camera.cpp
 )
 
 # Find and link fmt
