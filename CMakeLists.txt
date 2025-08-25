@@ -7,13 +7,19 @@ set(CMAKE_TOOLCHAIN_FILE "C:/Programs - Main/vcpkg/scripts/buildsystems/vcpkg.cm
 
 set(CMAKE_PREFIX_PATH "C:/Programs - Main/vcpkg/installed/x64-mingw-static")
 
-# # Include Directories
+# Include Directories
 include_directories(include)
 
 # Add source
 add_executable(${PROJECT_NAME}
     src/main.cpp
     src/glad.c
+    src/stb.cpp
+    src/Shader.cpp
+    src/Optional.cpp
+    src/EBO.cpp
+    src/VAO.cpp
+    src/VBO.cpp
     src/stb.cpp
 )
 

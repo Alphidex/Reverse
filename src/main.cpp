@@ -6,13 +6,20 @@
 #include<sstream>
 #include<iostream>
 #include<cerrno>
-#include <filesystem>
-#include <thread>
-#include <chrono>
+#include<filesystem>
+#include<thread>
+#include<chrono>
 
 // External Packages
 #include<glad/glad.h> // Assigns function pointers since OpenGL is a specification
 #include<GLFW/glfw3.h> // Create windows, assign context, poll events
+#include <stb/stb_image.h>
+
+// Project Packages
+#include<project/Shader.h>
+#include<project/VAO.h>
+#include<project/VBO.h>
+#include<project/EBO.h>
 
 
 // Parameters
@@ -27,10 +34,11 @@ void shaderErrors(unsigned int& shader, std::string type);
 
 // Data
 float vertices[] = {
-     0.5f,  0.5f, 0.0f,  // top right
-     0.5f, -0.5f, 0.0f,  // bottom right
-    -0.5f, -0.5f, 0.0f,  // bottom left
-    -0.5f,  0.5f, 0.0f   // top left 
+    //    Coords               Tex  
+     0.5f,  0.5f, 0.0f,  1.0f, 1.0f, // top right
+     0.5f, -0.5f, 0.0f,  1.0f, 0.0f, // bottom right
+    -0.5f, -0.5f, 0.0f,  0.0f, 0.0f // bottom left
+    -0.5f,  0.5f, 0.0f,  0.0f, 1.0f // top left 
 };
 unsigned int indices[] = {
     0, 1, 3,   // first triangle
@@ -61,55 +69,50 @@ int main(){
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); 
     
     // Shader Setup
-    unsigned int vertexShader, fragmentShader;
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    Shader shaderProgram("shader/default.vert", "shader/default.frag");
 
-    std::string vertexCode   = getFileContents("shader/default.vert");
-    std::string fragmentCode = getFileContents("shader/default.frag");
+    // // Buffer Setup
+    VAO VAO;
+    VBO VBO(vertices, sizeof(vertices));
+    EBO EBO(indices, sizeof(indices));
 
-    const char* vertexShaderSource   = vertexCode.c_str();
-    const char* fragmentShaderSource = fragmentCode.c_str();
-    
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    VAO.Bind();
+    VBO.Bind();
+    EBO.Bind();
 
-    glCompileShader(vertexShader);
-    glCompileShader(fragmentShader);
-    shaderErrors(vertexShader, "SHADER");
-    shaderErrors(fragmentShader,"SHADER");
+    VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, 5*sizeof(float), (void*)0);
+    VAO.LinkAttrib(VBO, 2, 2, GL_FLOAT, 5*sizeof(float), (void*)(3*sizeof(float)));
 
-    unsigned int shaderProgram;
-    shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-    shaderErrors(shaderProgram,"PROGRAM");
+    VAO.Unbind();
+    VBO.Unbind();
+    EBO.Unbind();
 
-    // Save memory
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    // // Texture
+    // unsigned int texture;
+    // glGenTextures(1, &texture);
+    // glBindTexture(GL_TEXTURE_2D, texture);
 
-    // Buffer Setup
-    unsigned int VBO, VAO, EBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
+    // // Wrapping/filtering options   
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    // Run this before VBO/EBO so VAO knows the configuration
-    glBindVertexArray(VAO);
+    // int width, height, nrChannels;
+    // unsigned char* data = stbi_load("resource/wall.jpg", &width, &height, &nrChannels, 0);
+    // if (data){
+    //     GLenum imageType = nrChannels == 3 ? GL_RGB : GL_RGBA;
+    //     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    //     glGenerateMipmap(GL_TEXTURE_2D);
+    // } else {
+    //     std::cout << "Failed to load texture" << std::endl;
+    // }
+    // stbi_image_free(data);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // Curious what happens if I keep it out of while loop
-    glUseProgram(shaderProgram);
-    glBindVertexArray(VAO);
+    shaderProgram.Enable();
+    // glUniform1i(glGetUniformLocation(shaderProgram.ID, "sampledTexture"), 0);
 
     while(!glfwWindowShouldClose(window))
     {   
@@ -120,15 +123,18 @@ int main(){
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Drawing
+        // glActiveTexture(GL_TEXTURE0);
+        // glBindTexture(GL_TEXTURE_2D, texture);
+        VAO.Bind();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glfwSwapBuffers(window);
         glfwPollEvents();    
     }
 
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
-    glDeleteProgram(shaderProgram);
+    VAO.Delete();
+    VBO.Delete();
+    EBO.Delete();
+    shaderProgram.Delete();
     
     glfwTerminate();
     return 0;
@@ -143,34 +149,4 @@ void processInput(GLFWwindow *window)
 {
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-}
-
-// Reads a text file and outputs a string with everything in the text file
-std::string getFileContents(const char* filename)
-{
-	std::ifstream in(filename, std::ios::binary);
-	if (in)
-	{
-		std::string contents;
-		in.seekg(0, std::ios::end);
-		contents.resize(in.tellg());
-		in.seekg(0, std::ios::beg);
-		in.read(&contents[0], contents.size());
-		in.close();
-		return(contents);
-	}
-	throw std::runtime_error(std::string("Failed to open file: ") + filename);
-}
-
-void shaderErrors(unsigned int& shader, std::string type){
-    int  success;
-    char infoLog[512];
-    if (type == "SHADER") glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-    else if (type == "PROGRAM") glGetProgramiv(shader, GL_LINK_STATUS, &success);
-    else return;
-
-    if(!success) {
-        glGetProgramInfoLog(shader, 512, NULL, infoLog);
-        std::cout << "ERROR:: " << type << " ::FAILED! " << infoLog << std::endl;
-    }
 }
