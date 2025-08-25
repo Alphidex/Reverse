@@ -9,17 +9,21 @@
 #include<filesystem>
 #include<thread>
 #include<chrono>
+#include<vector>
 
 // External Packages
 #include<glad/glad.h> // Assigns function pointers since OpenGL is a specification
 #include<GLFW/glfw3.h> // Create windows, assign context, poll events
-#include <stb/stb_image.h>
+#include<stb/stb_image.h>
+#include<glm/glm.hpp>
 
 // Project Packages
 #include<project/Shader.h>
 #include<project/VAO.h>
 #include<project/VBO.h>
 #include<project/EBO.h>
+#include<project/Texture.h>
+#include<project/Optional.h>
 
 
 // Parameters
@@ -33,14 +37,14 @@ std::string getFileContents(const char* filename);
 void shaderErrors(unsigned int& shader, std::string type);
 
 // Data
-float vertices[] = {
-    //    Coords               Tex  
-     0.5f,  0.5f, 0.0f,  1.0f, 1.0f, // top right
-     0.5f, -0.5f, 0.0f,  1.0f, 0.0f, // bottom right
-    -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, // bottom left
-    -0.5f,  0.5f, 0.0f,  0.0f, 1.0f // top left 
+std::vector<Vertex> vertices = {
+    {{ 0.5f,  0.5f, 0.0f}, {1.0f, 1.0f}}, //topright
+    {{ 0.5f, -0.5f, 0.0f}, {1.0f, 0.0f}}, //bottomright
+    {{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f}}, //bottomleft
+    {{-0.5f,  0.5f, 0.0f}, {0.0f, 1.0f}} //bottomleft
 };
-unsigned int indices[] = {
+
+unsigned int indices[] = {  
     0, 1, 3,   // first triangle
     1, 2, 3    // second triangle
 }; 
@@ -71,9 +75,9 @@ int main(){
     // Shader Setup
     Shader shaderProgram("shader/default.vert", "shader/default.frag");
 
-    // // Buffer Setup
+    // Buffer Setup
     VAO VAO;
-    VBO VBO(vertices, sizeof(vertices));
+    VBO VBO(vertices);
     EBO EBO(indices, sizeof(indices));
 
     VAO.Bind();
@@ -88,26 +92,7 @@ int main(){
     EBO.Unbind();
 
     // Texture
-    unsigned int texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    // Wrapping/filtering options   
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    int width, height, nrChannels;
-    unsigned char* data = stbi_load("resource/wall.jpg", &width, &height, &nrChannels, 0);
-    if (data){
-        GLenum imageType = nrChannels == 3 ? GL_RGB : GL_RGBA;
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    } else {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-    stbi_image_free(data);
+    Texture texture("resource/wall.jpg", 0);
 
 
     // Curious what happens if I keep it out of while loop
@@ -123,10 +108,11 @@ int main(){
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Drawing
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, texture);
         VAO.Bind();
+        texture.Bind();
         glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(indices[0]), GL_UNSIGNED_INT, 0);
+
+
         glfwSwapBuffers(window);
         glfwPollEvents();    
     }

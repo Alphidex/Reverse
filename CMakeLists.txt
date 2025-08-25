@@ -19,7 +19,8 @@ add_executable(${PROJECT_NAME}
     src/EBO.cpp
     src/VAO.cpp
     src/VBO.cpp
-    src/stb.cpp
+    src/Texture.cpp
+    src/Mesh.cpp
 )
 
 # Find and link fmt
