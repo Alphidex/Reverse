@@ -37,7 +37,7 @@ float vertices[] = {
     //    Coords               Tex  
      0.5f,  0.5f, 0.0f,  1.0f, 1.0f, // top right
      0.5f, -0.5f, 0.0f,  1.0f, 0.0f, // bottom right
-    -0.5f, -0.5f, 0.0f,  0.0f, 0.0f // bottom left
+    -0.5f, -0.5f, 0.0f,  0.0f, 0.0f, // bottom left
     -0.5f,  0.5f, 0.0f,  0.0f, 1.0f // top left 
 };
 unsigned int indices[] = {
@@ -87,32 +87,32 @@ int main(){
     VBO.Unbind();
     EBO.Unbind();
 
-    // // Texture
-    // unsigned int texture;
-    // glGenTextures(1, &texture);
-    // glBindTexture(GL_TEXTURE_2D, texture);
+    // Texture
+    unsigned int texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
 
-    // // Wrapping/filtering options   
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // Wrapping/filtering options   
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    // int width, height, nrChannels;
-    // unsigned char* data = stbi_load("resource/wall.jpg", &width, &height, &nrChannels, 0);
-    // if (data){
-    //     GLenum imageType = nrChannels == 3 ? GL_RGB : GL_RGBA;
-    //     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-    //     glGenerateMipmap(GL_TEXTURE_2D);
-    // } else {
-    //     std::cout << "Failed to load texture" << std::endl;
-    // }
-    // stbi_image_free(data);
+    int width, height, nrChannels;
+    unsigned char* data = stbi_load("resource/wall.jpg", &width, &height, &nrChannels, 0);
+    if (data){
+        GLenum imageType = nrChannels == 3 ? GL_RGB : GL_RGBA;
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    } else {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+    stbi_image_free(data);
 
 
     // Curious what happens if I keep it out of while loop
     shaderProgram.Enable();
-    // glUniform1i(glGetUniformLocation(shaderProgram.ID, "sampledTexture"), 0);
+    glUniform1i(glGetUniformLocation(shaderProgram.ID, "sampledTexture"), 0);
 
     while(!glfwWindowShouldClose(window))
     {   
@@ -123,10 +123,10 @@ int main(){
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Drawing
-        // glActiveTexture(GL_TEXTURE0);
-        // glBindTexture(GL_TEXTURE_2D, texture);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture);
         VAO.Bind();
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(indices[0]), GL_UNSIGNED_INT, 0);
         glfwSwapBuffers(window);
         glfwPollEvents();    
     }
