@@ -24,6 +24,7 @@
 #include<project/EBO.h>
 #include<project/Texture.h>
 #include<project/Optional.h>
+#include<project/Mesh.h>
 
 
 // Parameters
@@ -44,7 +45,8 @@ std::vector<Vertex> vertices = {
     {{-0.5f,  0.5f, 0.0f}, {0.0f, 1.0f}} //bottomleft
 };
 
-unsigned int indices[] = {  
+std::vector<unsigned int> indices = 
+{  
     0, 1, 3,   // first triangle
     1, 2, 3    // second triangle
 }; 
@@ -75,25 +77,11 @@ int main(){
     // Shader Setup
     Shader shaderProgram("shader/default.vert", "shader/default.frag");
 
-    // Buffer Setup
-    VAO VAO;
-    VBO VBO(vertices);
-    EBO EBO(indices, sizeof(indices));
-
-    VAO.Bind();
-    VBO.Bind();
-    EBO.Bind();
-
-    VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, 5*sizeof(float), (void*)0);
-    VAO.LinkAttrib(VBO, 2, 2, GL_FLOAT, 5*sizeof(float), (void*)(3*sizeof(float)));
-
-    VAO.Unbind();
-    VBO.Unbind();
-    EBO.Unbind();
-
     // Texture
     Texture texture("resource/wall.jpg", 0);
 
+    // Mesh Setup
+    Mesh mesh(vertices, indices, texture);
 
     // Curious what happens if I keep it out of while loop
     shaderProgram.Enable();
@@ -108,18 +96,13 @@ int main(){
         glClear(GL_COLOR_BUFFER_BIT);
 
         // Drawing
-        VAO.Bind();
-        texture.Bind();
-        glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(indices[0]), GL_UNSIGNED_INT, 0);
-
+        mesh.Draw();
 
         glfwSwapBuffers(window);
         glfwPollEvents();    
     }
 
-    VAO.Delete();
-    VBO.Delete();
-    EBO.Delete();
+    mesh.Delete();
     shaderProgram.Delete();
     
     glfwTerminate();

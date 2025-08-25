@@ -5,17 +5,25 @@
 
 #include<project/Optional.h>
 #include<project/VAO.h>
+#include<project/VBO.h>
+#include<project/EBO.h>
 #include<project/Texture.h>
 
 class Mesh
 {
-private:
+public:
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
-    std::vector<Texture> textures;
-    // VAO VAO;
+    Texture texture;
     
-    Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture>& textures);
+    Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, Texture& texture);
+    void Draw();
+    void Delete();
+    
+private:
+    VAO vao;
+    EBO ebo;
+    VBO vbo;
 };
 
 #endif
