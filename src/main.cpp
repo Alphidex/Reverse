@@ -16,6 +16,8 @@
 #include<GLFW/glfw3.h> // Create windows, assign context, poll events
 #include<stb/stb_image.h>
 #include<glm/glm.hpp>
+#include<glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // Project Packages
 #include<project/Shader.h>
@@ -31,6 +33,9 @@
 int width = 800;
 int height = 800;
 
+const double targetFPS = 60.0;
+const double frameDuration = 1 / targetFPS;
+
 // Callback Functions
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -39,17 +44,71 @@ void shaderErrors(unsigned int& shader, std::string type);
 
 // Data
 std::vector<Vertex> vertices = {
-    {{ 0.5f,  0.5f, 0.0f}, {1.0f, 1.0f}}, //topright
-    {{ 0.5f, -0.5f, 0.0f}, {1.0f, 0.0f}}, //bottomright
-    {{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f}}, //bottomleft
-    {{-0.5f,  0.5f, 0.0f}, {0.0f, 1.0f}} //bottomleft
+    // Positions            // Texture Coords
+
+    // Front face
+    {{-0.5f, -0.5f,  0.5f}, {0.0f, 0.0f}}, // bottom-left
+    {{ 0.5f, -0.5f,  0.5f}, {1.0f, 0.0f}}, // bottom-right
+    {{ 0.5f,  0.5f,  0.5f}, {1.0f, 1.0f}}, // top-right
+    {{-0.5f,  0.5f,  0.5f}, {0.0f, 1.0f}}, // top-left
+
+    // Back face
+    {{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f}}, // bottom-right
+    {{ 0.5f, -0.5f, -0.5f}, {0.0f, 0.0f}}, // bottom-left
+    {{ 0.5f,  0.5f, -0.5f}, {0.0f, 1.0f}}, // top-left
+    {{-0.5f,  0.5f, -0.5f}, {1.0f, 1.0f}}, // top-right
+
+    // Left face
+    {{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f}},
+    {{-0.5f, -0.5f,  0.5f}, {1.0f, 0.0f}},
+    {{-0.5f,  0.5f,  0.5f}, {1.0f, 1.0f}},
+    {{-0.5f,  0.5f, -0.5f}, {0.0f, 1.0f}},
+
+    // Right face
+    {{ 0.5f, -0.5f, -0.5f}, {1.0f, 0.0f}},
+    {{ 0.5f, -0.5f,  0.5f}, {0.0f, 0.0f}},
+    {{ 0.5f,  0.5f,  0.5f}, {0.0f, 1.0f}},
+    {{ 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f}},
+
+    // Top face
+    {{-0.5f,  0.5f, -0.5f}, {0.0f, 1.0f}},
+    {{-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f}},
+    {{ 0.5f,  0.5f,  0.5f}, {1.0f, 0.0f}},
+    {{ 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f}},
+
+    // Bottom face
+    {{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f}},
+    {{-0.5f, -0.5f,  0.5f}, {1.0f, 0.0f}},
+    {{ 0.5f, -0.5f,  0.5f}, {0.0f, 0.0f}},
+    {{ 0.5f, -0.5f, -0.5f}, {0.0f, 1.0f}}
 };
 
-std::vector<unsigned int> indices = 
-{  
-    0, 1, 3,   // first triangle
-    1, 2, 3    // second triangle
-}; 
+std::vector<unsigned int> indices = {  
+    // Front face
+    0, 1, 2,  
+    2, 3, 0,
+
+    // Back face
+    4, 5, 6,
+    6, 7, 4,
+
+    // Left face
+    8, 9, 10,
+    10, 11, 8,
+
+    // Right face
+    12, 13, 14,
+    14, 15, 12,
+
+    // Top face
+    16, 17, 18,
+    18, 19, 16,
+
+    // Bottom face
+    20, 21, 22,
+    22, 23, 20
+};
+
 
 int main(){
     // As it starts out in: "C:\\Users\\.User\\Desktop\\Reverse\\out\\build\\default"
@@ -68,11 +127,13 @@ int main(){
         return -1;
     }
     glfwMakeContextCurrent(window);
-    
+
     gladLoadGL();
     glViewport(0, 0, width, height);
  
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); 
+
+    glEnable(GL_DEPTH_TEST);
     
     // Shader Setup
     Shader shaderProgram("shader/default.vert", "shader/default.frag");
@@ -89,17 +150,58 @@ int main(){
 
     while(!glfwWindowShouldClose(window))
     {   
+        double startTime = glfwGetTime();
+
         processInput(window);
 
         // Clears the back-buffer with said color
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Drawing
-        mesh.Draw();
+        glm::vec3 cubePositions[] = {
+            glm::vec3( 0.0f,  0.0f,  0.0f), 
+            glm::vec3( 2.0f,  5.0f, -15.0f), 
+            glm::vec3(-1.5f, -2.2f, -2.5f),  
+            glm::vec3(-3.8f, -2.0f, -12.3f),  
+            glm::vec3( 2.4f, -0.4f, -3.5f),  
+            glm::vec3(-1.7f,  3.0f, -7.5f),  
+            glm::vec3( 1.3f, -2.0f, -2.5f),  
+            glm::vec3( 1.5f,  2.0f, -2.5f), 
+            glm::vec3( 1.5f,  0.2f, -1.5f), 
+            glm::vec3(-1.3f,  1.0f, -1.5f)  
+        };
 
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
+
+        glm::mat4 view = glm::mat4(1.0f);
+        // note that we're translating the scene in the reverse direction of where we want to move
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); 
+
+        glm::mat4 projection;
+        projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+
+        glm::mat4 trans = glm::mat4(1.0f);
+        trans = projection * view * model;
+
+        for (int i = 0; i < 10; i++){
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, cubePositions[i]);
+            model = glm::rotate(model, (float)glfwGetTime() + i * 15, glm::vec3(0.5f, 1.0f, 0.0f));
+            trans = projection * view * model;
+            glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "transform"), 1, GL_FALSE, glm::value_ptr(trans));
+            mesh.Draw();
+        }
         glfwSwapBuffers(window);
-        glfwPollEvents();    
+        glfwPollEvents();
+        
+        
+        double endTime = glfwGetTime();
+        double elapsed = endTime - startTime;
+        if (elapsed < frameDuration) {
+            std::this_thread::sleep_for(std::chrono::duration<double>(frameDuration - elapsed));
+        }
     }
 
     mesh.Delete();

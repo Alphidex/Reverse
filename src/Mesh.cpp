@@ -23,7 +23,7 @@ void Mesh::Draw()
     // Drawing
     vao.Bind();
     texture.Bind();
-    glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(indices[0]), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     vao.Unbind();
 }
 
