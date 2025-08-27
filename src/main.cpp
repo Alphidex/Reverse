@@ -35,6 +35,7 @@ int height = 800;
 
 const double targetFPS = 60.0;
 const double frameDuration = 1 / targetFPS;
+double deltaTime = 1;
 
 // Callback Functions
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -148,9 +149,11 @@ int main(){
     shaderProgram.Enable();
     glUniform1i(glGetUniformLocation(shaderProgram.ID, "sampledTexture"), 0);
 
+    double startTime, endTime;
+
     while(!glfwWindowShouldClose(window))
     {   
-        double startTime = glfwGetTime();
+        startTime = glfwGetTime();
 
         processInput(window);
 
@@ -175,9 +178,11 @@ int main(){
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
 
-        glm::mat4 view = glm::mat4(1.0f);
-        // note that we're translating the scene in the reverse direction of where we want to move
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f)); 
+        glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
+        glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+        glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
+        glm::mat4 view;
+        view = glm::lookAt(cameraPos, cameraFront + cameraPos, cameraUp);
 
         glm::mat4 projection;
         projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
@@ -197,10 +202,10 @@ int main(){
         glfwPollEvents();
         
         
-        double endTime = glfwGetTime();
-        double elapsed = endTime - startTime;
-        if (elapsed < frameDuration) {
-            std::this_thread::sleep_for(std::chrono::duration<double>(frameDuration - elapsed));
+        endTime = glfwGetTime();
+        deltaTime = endTime - startTime;
+        if (deltaTime < frameDuration) {
+            std::this_thread::sleep_for(std::chrono::duration<double>(frameDuration - deltaTime));
         }
     }
 
@@ -220,4 +225,9 @@ void processInput(GLFWwindow *window)
 {
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+
+    const float cameraSpeed = 5.0f * deltaTime;
+    if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        cameraPos
+
 }
