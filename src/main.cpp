@@ -17,10 +17,10 @@
 #include<stb/stb_image.h>
 #include<glm/glm.hpp>
 #include<glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include "imgui.h"
-#include "imgui/backends/imgui_impl_glfw.h"
-#include "imgui/backends/imgui_impl_opengl3.h"
+#include<glm/gtc/type_ptr.hpp>
+#include<imgui.h>
+#include<imgui/backends/imgui_impl_glfw.h>
+#include<imgui/backends/imgui_impl_opengl3.h>
 
 // Project Packages
 #include<project/Shader.h>
@@ -147,10 +147,11 @@ int main(){
 
     gladLoadGL();
     glViewport(0, 0, width, height);
- 
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); 
 
     glEnable(GL_DEPTH_TEST);
+    
+    // Callbacks
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); 
     
     // Shader Setup
     Shader shaderProgram("shader/default.vert", "shader/default.frag");
@@ -162,7 +163,8 @@ int main(){
     Mesh mesh(vertices, indices, texture);
 
     // Camera
-    Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, -1.0f));
+    Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+    glfwSetScrollCallback(window, Scroll_Callback);
 
     // Curious what happens if I keep it out of while loop
     shaderProgram.Enable();
@@ -174,17 +176,6 @@ int main(){
 
         glfwPollEvents();
         processInput(window);
-
-        // Start a new ImGui frame
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        // Build your debug window
-        ImGui::Begin("Debug Window");
-        ImGui::Text("Hello from ImGui!");
-        ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
-        ImGui::End();
 
         // Clears the back-buffer with said color
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -207,24 +198,39 @@ int main(){
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
 
-        glm::mat4 view;
-        view = camera.Inputs(window);
-
-        glm::mat4 projection;
-        projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+        glm::mat4 cameraView;
+        cameraView = camera.Inputs(window);
 
         glm::mat4 trans = glm::mat4(1.0f);
-        trans = projection * view * model;
 
         for (int i = 0; i < 10; i++){
             model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[i]);
             model = glm::rotate(model, (float)glfwGetTime() + i * 15, glm::vec3(0.5f, 1.0f, 0.0f));
-            trans = projection * view * model;
+            trans = cameraView * model;
             glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "transform"), 1, GL_FALSE, glm::value_ptr(trans));
             mesh.Draw();
         }
 
+        
+        // Start a new ImGui frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        // Build your debug window
+        ImGui::Begin("Debug Window");
+        ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
+        ImGui::Text("Position:  %.2f, %.2f, %.2f", 
+            camera.Position.x, 
+            camera.Position.y, 
+            camera.Position.z);
+        ImGui::Text("Front: %.2f, %.2f, %.2f", 
+            camera.Front.x, 
+            camera.Front.y, 
+            camera.Front.z);
+
+        ImGui::End();
         // Rendering
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

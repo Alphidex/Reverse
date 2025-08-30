@@ -33,7 +33,7 @@ set(IMGUI_SOURCES
 
 target_sources(${PROJECT_NAME} PRIVATE ${IMGUI_SOURCES})
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${IMGUI_DIR} ${IMGUI_DIR}/backends)
+target_include_directories(${PROJECT_NAME} PRIVATE ${IMGUI_DIR})
 
 
 # Find and link fmt
