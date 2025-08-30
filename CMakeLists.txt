@@ -1,11 +1,6 @@
 cmake_minimum_required(VERSION 3.25.1)
 project(Reverse)
 
-# Dynamic Linking
-# set(VCPKG_TARGET_TRIPLET "x64-mingw-static")
-# set(CMAKE_TOOLCHAIN_FILE "C:/Programs - Main/vcpkg/scripts/buildsystems/vcpkg.cmake")
-# set(CMAKE_PREFIX_PATH "C:/Programs - Main/vcpkg/installed/x64-mingw-static")
-
 # Include Directories
 include_directories(include)
 
@@ -21,7 +16,25 @@ add_executable(${PROJECT_NAME}
     src/VBO.cpp
     src/Texture.cpp
     src/Mesh.cpp
+    src/Camera.cpp
 )
+
+# ImGui sources
+set(IMGUI_DIR include/imgui)
+
+set(IMGUI_SOURCES
+    ${IMGUI_DIR}/imgui.cpp
+    ${IMGUI_DIR}/imgui_draw.cpp
+    ${IMGUI_DIR}/imgui_tables.cpp
+    ${IMGUI_DIR}/imgui_widgets.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
+    ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
+)
+
+target_sources(${PROJECT_NAME} PRIVATE ${IMGUI_SOURCES})
+
+target_include_directories(${PROJECT_NAME} PRIVATE ${IMGUI_DIR} ${IMGUI_DIR}/backends)
+
 
 # Find and link fmt
 find_package(OpenGL REQUIRED)

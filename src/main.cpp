@@ -18,6 +18,9 @@
 #include<glm/glm.hpp>
 #include<glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "imgui.h"
+#include "imgui/backends/imgui_impl_glfw.h"
+#include "imgui/backends/imgui_impl_opengl3.h"
 
 // Project Packages
 #include<project/Shader.h>
@@ -27,6 +30,7 @@
 #include<project/Texture.h>
 #include<project/Optional.h>
 #include<project/Mesh.h>
+#include<project/Camera.h>
 
 
 // Parameters
@@ -35,7 +39,6 @@ int height = 800;
 
 const double targetFPS = 60.0;
 const double frameDuration = 1 / targetFPS;
-double deltaTime = 1;
 
 // Callback Functions
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -129,6 +132,19 @@ int main(){
     }
     glfwMakeContextCurrent(window);
 
+    // Debug window
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
+
+
     gladLoadGL();
     glViewport(0, 0, width, height);
  
@@ -145,17 +161,30 @@ int main(){
     // Mesh Setup
     Mesh mesh(vertices, indices, texture);
 
+    // Camera
+    Camera camera(glm::vec3(0.0f, 0.0f, 3.0f), glm::vec3(0.0f, 0.0f, -1.0f));
+
     // Curious what happens if I keep it out of while loop
     shaderProgram.Enable();
     glUniform1i(glGetUniformLocation(shaderProgram.ID, "sampledTexture"), 0);
 
-    double startTime, endTime;
-
     while(!glfwWindowShouldClose(window))
     {   
-        startTime = glfwGetTime();
+        double startTime = glfwGetTime();
 
+        glfwPollEvents();
         processInput(window);
+
+        // Start a new ImGui frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        // Build your debug window
+        ImGui::Begin("Debug Window");
+        ImGui::Text("Hello from ImGui!");
+        ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
+        ImGui::End();
 
         // Clears the back-buffer with said color
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -178,11 +207,8 @@ int main(){
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
 
-        glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
-        glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-        glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
         glm::mat4 view;
-        view = glm::lookAt(cameraPos, cameraFront + cameraPos, cameraUp);
+        view = camera.Inputs(window);
 
         glm::mat4 projection;
         projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
@@ -198,20 +224,28 @@ int main(){
             glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "transform"), 1, GL_FALSE, glm::value_ptr(trans));
             mesh.Draw();
         }
+
+        // Rendering
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         glfwSwapBuffers(window);
-        glfwPollEvents();
         
         
-        endTime = glfwGetTime();
-        deltaTime = endTime - startTime;
-        if (deltaTime < frameDuration) {
-            std::this_thread::sleep_for(std::chrono::duration<double>(frameDuration - deltaTime));
+        double endTime = glfwGetTime();
+        double elapsed = endTime - startTime;
+        if (elapsed < frameDuration) {
+            std::this_thread::sleep_for(std::chrono::duration<double>(frameDuration - elapsed));
         }
     }
 
     mesh.Delete();
     shaderProgram.Delete();
-    
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
     glfwTerminate();
     return 0;
 }
@@ -225,9 +259,4 @@ void processInput(GLFWwindow *window)
 {
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-
-    const float cameraSpeed = 5.0f * deltaTime;
-    if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        cameraPos
-
 }
