@@ -29,7 +29,6 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath){
     // Save memory
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
-
 }
 
 void Shader::Enable(){

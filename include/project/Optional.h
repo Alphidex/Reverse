@@ -11,6 +11,7 @@ std::string readFile(std::string filename);
 
 struct Vertex{
     glm::vec3 coord;
+    glm::vec4 color;
     glm::vec2 texCoord;
 };
 

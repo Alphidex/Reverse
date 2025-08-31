@@ -1,9 +1,10 @@
 #include<project/Texture.h>
 
+Texture::Texture() {};
+
 Texture::Texture(const char* filePath, int texUnit){
     glGenTextures(1, &ID);
     glBindTexture(GL_TEXTURE_2D, ID);
-
 
     // Wrapping/filtering options   
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
@@ -33,3 +34,9 @@ void Texture::Bind()
     glActiveTexture(GL_TEXTURE0 + texUnit);
     glBindTexture(GL_TEXTURE_2D, ID);  
 }
+
+// void Texture::SendUniformData(Shader& shader, const char* uniform)
+// {
+//     shader.Enable();
+//     glUniform1i(texUnit, uniform);
+// }

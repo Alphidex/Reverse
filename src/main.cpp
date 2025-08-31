@@ -50,43 +50,43 @@ void shaderErrors(unsigned int& shader, std::string type);
 
 // Data
 std::vector<Vertex> vertices = {
-    // Positions            // Texture Coords
+    // Positions             // Color           // Texture Coords
 
     // Front face
-    {{-0.5f, -0.5f,  0.5f}, {0.0f, 0.0f}}, // bottom-left
-    {{ 0.5f, -0.5f,  0.5f}, {1.0f, 0.0f}}, // bottom-right
-    {{ 0.5f,  0.5f,  0.5f}, {1.0f, 1.0f}}, // top-right
-    {{-0.5f,  0.5f,  0.5f}, {0.0f, 1.0f}}, // top-left
+    {{-0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}}, // bottom-left
+    {{ 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}}, // bottom-right
+    {{ 0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}}, // top-right
+    {{-0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}, // top-left
 
     // Back face
-    {{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f}}, // bottom-right
-    {{ 0.5f, -0.5f, -0.5f}, {0.0f, 0.0f}}, // bottom-left
-    {{ 0.5f,  0.5f, -0.5f}, {0.0f, 1.0f}}, // top-left
-    {{-0.5f,  0.5f, -0.5f}, {1.0f, 1.0f}}, // top-right
+    {{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}}, // bottom-right
+    {{ 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}}, // bottom-left
+    {{ 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}, // top-left
+    {{-0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}}, // top-right
 
     // Left face
-    {{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f}},
-    {{-0.5f, -0.5f,  0.5f}, {1.0f, 0.0f}},
-    {{-0.5f,  0.5f,  0.5f}, {1.0f, 1.0f}},
-    {{-0.5f,  0.5f, -0.5f}, {0.0f, 1.0f}},
+    {{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+    {{-0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+    {{-0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+    {{-0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
 
     // Right face
-    {{ 0.5f, -0.5f, -0.5f}, {1.0f, 0.0f}},
-    {{ 0.5f, -0.5f,  0.5f}, {0.0f, 0.0f}},
-    {{ 0.5f,  0.5f,  0.5f}, {0.0f, 1.0f}},
-    {{ 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f}},
+    {{ 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+    {{ 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+    {{ 0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+    {{ 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
 
     // Top face
-    {{-0.5f,  0.5f, -0.5f}, {0.0f, 1.0f}},
-    {{-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f}},
-    {{ 0.5f,  0.5f,  0.5f}, {1.0f, 0.0f}},
-    {{ 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f}},
+    {{-0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
+    {{-0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+    {{ 0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+    {{ 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
 
     // Bottom face
-    {{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f}},
-    {{-0.5f, -0.5f,  0.5f}, {1.0f, 0.0f}},
-    {{ 0.5f, -0.5f,  0.5f}, {0.0f, 0.0f}},
-    {{ 0.5f, -0.5f, -0.5f}, {0.0f, 1.0f}}
+    {{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}},
+    {{-0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}},
+    {{ 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}},
+    {{ 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
 };
 
 std::vector<unsigned int> indices = {  
@@ -116,6 +116,16 @@ std::vector<unsigned int> indices = {
 };
 
 
+
+
+// TODO:
+// Change Texture class so taht it samples the texture to shader ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// FIX LIGHT SHADER
+
+
+
+
+
 int main(){
     // As it starts out in: "C:\\Users\\.User\\Desktop\\Reverse\\out\\build\\default"
     std::filesystem::current_path(std::filesystem::path(__FILE__).parent_path().parent_path());
@@ -133,7 +143,15 @@ int main(){
         return -1;
     }
     glfwMakeContextCurrent(window);
-    glfwSwapInterval(1); // use Vsync
+
+    gladLoadGL();
+    glViewport(0, 0, width, height);
+
+    glEnable(GL_DEPTH_TEST);
+    
+    // Callback + Settings
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSwapInterval(1); // use Vsync 
 
     // Debug window
     IMGUI_CHECKVERSION();
@@ -146,32 +164,23 @@ int main(){
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
-
-
-    gladLoadGL();
-    glViewport(0, 0, width, height);
-
-    glEnable(GL_DEPTH_TEST);
-    
-    // Callbacks
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); 
     
     // Shader Setup
     Shader shaderProgram("shader/default.vert", "shader/default.frag");
+    Shader lightShader("shader/light.vert", "shader/light.frag");
 
     // Texture
     Texture texture("resource/wall.jpg", 0);
 
     // Mesh Setup
-    Mesh mesh(vertices, indices, texture);
+    Mesh regularCube(vertices, indices);
+    regularCube.ChangeTexture(texture);
+
+    Mesh lightCube(vertices, indices);
 
     // Camera
     Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
     glfwSetScrollCallback(window, Scroll_Callback);
-
-    // Curious what happens if I keep it out of while loop
-    shaderProgram.Enable();
-    glUniform1i(glGetUniformLocation(shaderProgram.ID, "sampledTexture"), 0);
 
     while(!glfwWindowShouldClose(window))
     {   
@@ -185,6 +194,8 @@ int main(){
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Drawing
+        camera.Update(window, deltaTime, shaderProgram, "cameraView");
+
         glm::vec3 cubePositions[] = {
             glm::vec3( 0.0f,  0.0f,  0.0f), 
             glm::vec3( 2.0f,  5.0f, -15.0f), 
@@ -198,24 +209,21 @@ int main(){
             glm::vec3(-1.3f,  1.0f, -1.5f)  
         };
 
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
-
-        glm::mat4 cameraView;
-        cameraView = camera.Inputs(window, deltaTime);
-
-        glm::mat4 trans = glm::mat4(1.0f);
-
         for (int i = 0; i < 10; i++){
-            model = glm::mat4(1.0f);
-            model = glm::translate(model, cubePositions[i]);
-            model = glm::rotate(model, (float)glfwGetTime() + i * 15, glm::vec3(0.5f, 1.0f, 0.0f));
-            trans = cameraView * model;
-            glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "transform"), 1, GL_FALSE, glm::value_ptr(trans));
-            mesh.Draw();
+            regularCube.ChangePosition(cubePositions[i]);
+            regularCube.ChangeRotation((float)glfwGetTime() + i * 15, glm::vec3(0.5f, 1.0f, 0.0f));
+            regularCube.Draw(shaderProgram, "model");
         }
-
         
+        lightCube.ChangePosition(glm::vec3(0.0f, 0.0f, 10.0f));
+        lightCube.Draw(lightShader, "model");
+
+
+
+
+
+
+        // ------ Debugging ------
         // Start a new ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -237,6 +245,7 @@ int main(){
         // Rendering
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        // ------ End debugging ------
 
         glfwSwapBuffers(window);
 
@@ -244,8 +253,11 @@ int main(){
         deltaTime = endTime - startTime;
     }
 
-    mesh.Delete();
+    regularCube.Delete();
+    lightCube.Delete();
+
     shaderProgram.Delete();
+    lightShader.Delete();
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();

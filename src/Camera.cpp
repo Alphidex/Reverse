@@ -5,7 +5,7 @@ double Fov = 45;
 
 Camera::Camera(glm::vec3 position) : Position(position) {}
 
-glm::mat4 Camera::Inputs(GLFWwindow* window, double deltaTime)
+void Camera::KeyboardMovement(GLFWwindow* window, double deltaTime)
 {
     float calibratedMovementSpeed = deltaTime * MovementSpeed;
 
@@ -29,8 +29,10 @@ glm::mat4 Camera::Inputs(GLFWwindow* window, double deltaTime)
         MovementSpeed = shiftMovementSpeed;
     if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
         MovementSpeed = baseMovementSpeed;
+}
 
-    // Mouse Movement
+void Camera::MouseMovement(GLFWwindow* window)
+{
     if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS){
         if (firstClick)
         {
@@ -60,7 +62,21 @@ glm::mat4 Camera::Inputs(GLFWwindow* window, double deltaTime)
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);  
         firstClick = true;
     }
+}
 
+void Camera::UpdateShader(Shader& shader, const char* uniform)
+{
+    glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(CameraView));
+}
+
+void Camera::Update(GLFWwindow* window, double deltaTime, Shader& shader, const char* uniform)
+{
+    shader.Enable();
+
+    KeyboardMovement(window, deltaTime);
+    MouseMovement(window);
+
+    // Looking
     Front.x = cos(glm::radians(Pitch)) * cos(glm::radians(Yaw));
     Front.y = sin(glm::radians(Pitch)); 
     Front.z = cos(glm::radians(Pitch)) * sin(glm::radians(Yaw));
@@ -73,7 +89,8 @@ glm::mat4 Camera::Inputs(GLFWwindow* window, double deltaTime)
     glm::mat4 projection;
     projection = glm::perspective(glm::radians((float) Fov), 800.0f / 600.0f, 0.1f, 1000.0f);
 
-    return projection * view;
+    CameraView = projection * view;
+    UpdateShader(shader, uniform);
 }
 
 void Scroll_Callback(GLFWwindow* window, double xoffset, double yoffset){
