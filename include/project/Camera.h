@@ -16,11 +16,8 @@ public:
     glm::vec3 Position;
     glm::vec3 Front;
 
-    float MovementSpeed = 0.25f;
-    float MouseSensitivity = 0.1f;
-
     Camera(glm::vec3 Position);
-    glm::mat4 Inputs(GLFWwindow* window);
+    glm::mat4 Inputs(GLFWwindow* window, double deltaTime);
 
 private:
     struct MousePosition{
@@ -28,6 +25,13 @@ private:
         double y;
     };
     MousePosition lastMousePos;
+
+    float baseMovementSpeed = 30;
+    float shiftMovementSpeed = 90;
+
+    float MovementSpeed = baseMovementSpeed;
+    float MouseSensitivity = 0.1f;
+
 };
 
 void Scroll_Callback(GLFWwindow* window, double xoffset, double yoffset);

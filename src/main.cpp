@@ -37,8 +37,10 @@
 int width = 800;
 int height = 800;
 
-const double targetFPS = 60.0;
-const double frameDuration = 1 / targetFPS;
+const int FPS = 60; 
+const std::chrono::microseconds frameDuration(1'000'000 / FPS);
+double deltaTime = 0;
+
 
 // Callback Functions
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -131,6 +133,7 @@ int main(){
         return -1;
     }
     glfwMakeContextCurrent(window);
+    glfwSwapInterval(1); // use Vsync
 
     // Debug window
     IMGUI_CHECKVERSION();
@@ -172,7 +175,7 @@ int main(){
 
     while(!glfwWindowShouldClose(window))
     {   
-        double startTime = glfwGetTime();
+        auto startTime = glfwGetTime();
 
         glfwPollEvents();
         processInput(window);
@@ -199,7 +202,7 @@ int main(){
         model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
 
         glm::mat4 cameraView;
-        cameraView = camera.Inputs(window);
+        cameraView = camera.Inputs(window, deltaTime);
 
         glm::mat4 trans = glm::mat4(1.0f);
 
@@ -236,13 +239,9 @@ int main(){
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         glfwSwapBuffers(window);
-        
-        
-        double endTime = glfwGetTime();
-        double elapsed = endTime - startTime;
-        if (elapsed < frameDuration) {
-            std::this_thread::sleep_for(std::chrono::duration<double>(frameDuration - elapsed));
-        }
+
+        auto endTime = glfwGetTime();
+        deltaTime = endTime - startTime;
     }
 
     mesh.Delete();
