@@ -6,8 +6,8 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath){
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
     fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
-    std::string vertexCode   = readFile("shader/default.vert");
-    std::string fragmentCode = readFile("shader/default.frag");
+    std::string vertexCode   = readFile(vertexPath);
+    std::string fragmentCode = readFile(fragmentPath);
 
     const char* vertexShaderSource   = vertexCode.c_str();
     const char* fragmentShaderSource = fragmentCode.c_str();

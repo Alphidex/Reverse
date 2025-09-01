@@ -66,13 +66,12 @@ void Camera::MouseMovement(GLFWwindow* window)
 
 void Camera::UpdateShader(Shader& shader, const char* uniform)
 {
+    shader.Enable();
     glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(CameraView));
 }
 
-void Camera::Update(GLFWwindow* window, double deltaTime, Shader& shader, const char* uniform)
+void Camera::Update(GLFWwindow* window, double deltaTime, std::vector<Shader>& shaderList, const char* uniform)
 {
-    shader.Enable();
-
     KeyboardMovement(window, deltaTime);
     MouseMovement(window);
 
@@ -90,7 +89,9 @@ void Camera::Update(GLFWwindow* window, double deltaTime, Shader& shader, const 
     projection = glm::perspective(glm::radians((float) Fov), 800.0f / 600.0f, 0.1f, 1000.0f);
 
     CameraView = projection * view;
-    UpdateShader(shader, uniform);
+
+    for (Shader& shader : shaderList)
+        UpdateShader(shader, uniform);
 }
 
 void Scroll_Callback(GLFWwindow* window, double xoffset, double yoffset){

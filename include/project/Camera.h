@@ -7,6 +7,7 @@
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
 #include<project/Shader.h>
+#include<vector>
 
 class Camera
 {
@@ -15,7 +16,7 @@ public:
     glm::vec3 Front;
 
     Camera(glm::vec3 Position);
-    void Update(GLFWwindow* window, double deltaTime, Shader& shader, const char* uniform);
+    void Update(GLFWwindow* window, double deltaTime, std::vector<Shader>& shaderList, const char* uniform);
 
 private:
     bool firstClick = true;

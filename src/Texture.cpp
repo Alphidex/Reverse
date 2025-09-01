@@ -25,18 +25,13 @@ Texture::Texture(const char* filePath, int texUnit){
         std::cout << "Failed to load texture" << std::endl;
     }
     stbi_image_free(data);
-
+    glBindTexture(GL_TEXTURE_2D, 0);
     this->texUnit = texUnit;
 }
 
-void Texture::Bind()
+void Texture::Bind(Shader& shader, const char* uniform)
 {
     glActiveTexture(GL_TEXTURE0 + texUnit);
-    glBindTexture(GL_TEXTURE_2D, ID);  
+    glBindTexture(GL_TEXTURE_2D, ID);
+    glUniform1i(glGetUniformLocation(shader.ID, uniform), texUnit);  
 }
-
-// void Texture::SendUniformData(Shader& shader, const char* uniform)
-// {
-//     shader.Enable();
-//     glUniform1i(texUnit, uniform);
-// }

@@ -10,9 +10,9 @@ ebo(indices.data(), indices.size() * sizeof(unsigned int))
     vbo.Bind();
     ebo.Bind();
 
-    vao.LinkAttrib(vbo, 0, 3, GL_FLOAT, 9*sizeof(float), (void*)0);
-    vao.LinkAttrib(vbo, 1, 4, GL_FLOAT, 9*sizeof(float), (void*)(3 * sizeof(float)));
-    vao.LinkAttrib(vbo, 2, 2, GL_FLOAT, 9*sizeof(float), (void*)(7 * sizeof(float)));
+    vao.LinkAttrib(vbo, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, coord));
+    vao.LinkAttrib(vbo, 1, 4, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, color));
+    vao.LinkAttrib(vbo, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
 
     vao.Unbind();
     vbo.Unbind();
@@ -25,7 +25,7 @@ void Mesh::ChangeTexture(Texture& texture)
     drawTexture = true;
 }
 
-void Mesh::Draw(Shader& shader, const char* modelUniformLocation)
+void Mesh::Draw(Shader& shader, const char* uniform)
 {
     shader.Enable();
 
@@ -34,12 +34,12 @@ void Mesh::Draw(Shader& shader, const char* modelUniformLocation)
     model = glm::rotate(model, Rotation, RotationAxis);
     model = glm::scale(model, Scale);
 
-    glUniformMatrix4fv(glGetUniformLocation(shader.ID, modelUniformLocation), 1, GL_FALSE, glm::value_ptr(model));
+    glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(model));
 
     // Drawing
     vao.Bind();
     if (drawTexture)
-        texture.Bind();
+        texture.Bind(shader, "texture0");
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     vao.Unbind();
 }

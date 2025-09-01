@@ -14,8 +14,7 @@ public:
 
     Texture();
     Texture(const char* filePath, int texUnit);
-    void SendUniformData(Shader& shader, const char* uniform);
-    void Bind();
+    void Bind(Shader& shader, const char* uniform);
 };
 
 #endif

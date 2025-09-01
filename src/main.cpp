@@ -119,12 +119,7 @@ std::vector<unsigned int> indices = {
 
 
 // TODO:
-// Change Texture class so taht it samples the texture to shader ! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// FIX LIGHT SHADER
-
-
-
-
+// Create a Light Class and make it Inherit from Mesh
 
 int main(){
     // As it starts out in: "C:\\Users\\.User\\Desktop\\Reverse\\out\\build\\default"
@@ -168,6 +163,8 @@ int main(){
     // Shader Setup
     Shader shaderProgram("shader/default.vert", "shader/default.frag");
     Shader lightShader("shader/light.vert", "shader/light.frag");
+    std::vector<Shader> shaderList = {shaderProgram, lightShader};
+
 
     // Texture
     Texture texture("resource/wall.jpg", 0);
@@ -182,6 +179,14 @@ int main(){
     Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
     glfwSetScrollCallback(window, Scroll_Callback);
 
+    glm::vec4 lightColor =  glm::vec4(1.0, 0.0, 0.0, 1.0);
+
+    for (Shader shader : shaderList)
+    {
+        shader.Enable();
+        glUniform4fv(glGetUniformLocation(shader.ID, "lightColor"), 1, glm::value_ptr(lightColor));
+    }
+
     while(!glfwWindowShouldClose(window))
     {   
         auto startTime = glfwGetTime();
@@ -194,7 +199,7 @@ int main(){
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Drawing
-        camera.Update(window, deltaTime, shaderProgram, "cameraView");
+        camera.Update(window, deltaTime, shaderList, "cameraView");
 
         glm::vec3 cubePositions[] = {
             glm::vec3( 0.0f,  0.0f,  0.0f), 
@@ -214,12 +219,9 @@ int main(){
             regularCube.ChangeRotation((float)glfwGetTime() + i * 15, glm::vec3(0.5f, 1.0f, 0.0f));
             regularCube.Draw(shaderProgram, "model");
         }
-        
-        lightCube.ChangePosition(glm::vec3(0.0f, 0.0f, 10.0f));
+    
+        lightCube.ChangePosition(glm::vec3(4.0f, 3.0f, -2.0f));
         lightCube.Draw(lightShader, "model");
-
-
-
 
 
 
@@ -253,11 +255,9 @@ int main(){
         deltaTime = endTime - startTime;
     }
 
-    regularCube.Delete();
-    lightCube.Delete();
-
-    shaderProgram.Delete();
-    lightShader.Delete();
+    for (Shader shader : shaderList){
+        shader.Delete();
+    }
 
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();

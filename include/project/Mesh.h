@@ -23,7 +23,7 @@ class Mesh
 {
 public:    
     Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
-    void Draw(Shader& shader, const char* modelUniformLocation);
+    void Draw(Shader& shader, const char* uniform);
     void Delete();
     void ChangeTexture(Texture& texture);
     void ChangePosition(glm::vec3 position);
