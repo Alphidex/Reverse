@@ -13,6 +13,7 @@ struct Vertex{
     glm::vec3 coord;
     glm::vec4 color;
     glm::vec2 texCoord;
+    glm::vec3 normal;
 };
 
 #endif
