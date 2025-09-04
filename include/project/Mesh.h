@@ -3,6 +3,7 @@
 
 // System Packages
 #include<vector>
+#include<string>
 
 // External Packages
 #include<glad/glad.h>
@@ -25,7 +26,7 @@ public:
     Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
     void Draw(Shader& shader, const char* uniform);
     void Delete();
-    void ChangeTexture(Texture& texture);
+    void AddTextures(std::vector<Texture>& textures, std::vector<std::string>& uniforms);
     void ChangePosition(glm::vec3 position);
     void ChangeRotation(float rotationDegrees, glm::vec3 axis);
     void ChangeScale(glm::vec3 scale);
@@ -33,7 +34,8 @@ public:
 private:
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
-    Texture texture;
+    std::vector<Texture> Textures;
+    std::vector<std::string> TextureUniforms;
     bool drawTexture = false;
     
     VAO vao;

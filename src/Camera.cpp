@@ -9,8 +9,6 @@ void Camera::KeyboardMovement(GLFWwindow* window, double deltaTime)
 {
     float calibratedMovementSpeed = deltaTime * MovementSpeed;
 
-    std::cout << calibratedMovementSpeed << std::endl;
-
     // Movement
     if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         Position += Front * calibratedMovementSpeed;

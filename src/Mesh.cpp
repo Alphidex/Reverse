@@ -1,4 +1,5 @@
 #include<project/Mesh.h>
+#include <stdexcept>
 
 Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices): 
 vertices(vertices), indices(indices),
@@ -20,9 +21,14 @@ ebo(indices.data(), indices.size() * sizeof(unsigned int))
     ebo.Unbind();
 }
 
-void Mesh::ChangeTexture(Texture& texture)
+void Mesh::AddTextures(std::vector<Texture>& textures, std::vector<std::string>& uniforms)
 {
-    this->texture = texture;
+    if (textures.size() != uniforms.size()) {
+        throw std::runtime_error("Size mismatch: textures (" + std::to_string(textures.size()) + 
+                                ") vs uniforms (" + std::to_string(uniforms.size()) + ")");
+    }
+    Textures = textures;
+    TextureUniforms = uniforms;
     drawTexture = true;
 }
 
@@ -40,7 +46,12 @@ void Mesh::Draw(Shader& shader, const char* uniform)
     // Drawing
     vao.Bind();
     if (drawTexture)
-        texture.Bind(shader, "texture0");
+        for (int i = 0; i < Textures.size(); ++i)
+        {
+            Texture texture = Textures[i];
+            texture.Bind(shader, TextureUniforms[i].c_str());
+        }
+
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     vao.Unbind();
 }

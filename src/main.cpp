@@ -166,11 +166,14 @@ int main(){
 
 
     // Texture
-    Texture texture("resource/wall.jpg", 0);
+    Texture texture1("resource/container.png", 0);
+    Texture texture2("resource/container_specular.png", 1);
+    std::vector<Texture> textures = {texture1, texture2};
+    std::vector<std::string> textureUniforms = {"material.diffuse", "material.specular"};
 
     // Mesh Setup
     Mesh regularCube(vertices, indices);
-    // regularCube.ChangeTexture(texture);
+    regularCube.AddTextures(textures, textureUniforms);
 
     Mesh lightCube(vertices, indices);
 
@@ -180,7 +183,7 @@ int main(){
 
 
     // Light Data - Easier for Debugging
-    glm::vec3 lightColor =  glm::vec3(1.0, 0.0, 0.0);
+    glm::vec3 lightColor =  glm::vec3(1.0, 1.0, 1.0);
     glm::vec3 lightPos = glm::vec3(5, 4, 1);
 
     // Sending Uniform Data
@@ -189,8 +192,25 @@ int main(){
         shader.Enable();
         glUniform3fv(glGetUniformLocation(shader.ID, "lightColor"), 1, glm::value_ptr(lightColor));
     }
+
+    glm::vec3 materialAmbient = glm::vec3(1.0f, 0.5f, 0.31f);
+    glm::vec3 materialSpecular = glm::vec3(0.5, 0.5, 0.5);
+    const float materialShininess = 32.0f;
+
+    glm::vec3 lightAmbient = glm::vec3(0.2, 0.2, 0.2);
+    glm::vec3 lightDiffuse = glm::vec3(0.5, 0.5, 0.5);
+    glm::vec3 lightSpecular = glm::vec3(1, 1, 1);
+
     shaderProgram.Enable();
     glUniform3fv(glGetUniformLocation(shaderProgram.ID, "lightPos"), 1, glm::value_ptr(lightPos));
+    glUniform3fv(glGetUniformLocation(shaderProgram.ID, "material.ambient"), 1, glm::value_ptr(materialAmbient));
+    glUniform3fv(glGetUniformLocation(shaderProgram.ID, "material.diffuse"), 1,  glm::value_ptr(materialAmbient));
+    glUniform3fv(glGetUniformLocation(shaderProgram.ID, "material.specular"), 1,  glm::value_ptr(materialSpecular));
+    glUniform1fv(glGetUniformLocation(shaderProgram.ID, "material.shininess"), 1, &materialShininess);
+
+    glUniform3fv(glGetUniformLocation(shaderProgram.ID, "light.ambient"), 1, glm::value_ptr(lightAmbient));
+    glUniform3fv(glGetUniformLocation(shaderProgram.ID, "light.diffuse"), 1,  glm::value_ptr(lightDiffuse));
+    glUniform3fv(glGetUniformLocation(shaderProgram.ID, "light.specular"), 1,  glm::value_ptr(lightSpecular));
 
     while(!glfwWindowShouldClose(window))
     {   
@@ -229,7 +249,6 @@ int main(){
     
         lightCube.ChangePosition(lightPos);
         lightCube.Draw(lightShader, "model");
-
 
 
         // ------ Debugging ------
