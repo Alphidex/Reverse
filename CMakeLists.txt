@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.25.1)
+cmake_minimum_required(VERSION 4.1.0)
 project(Reverse)
 
 # Include Directories
@@ -17,12 +17,12 @@ add_executable(${PROJECT_NAME}
     src/Texture.cpp
     src/Mesh.cpp
     src/Camera.cpp
+    src/Light.cpp
 )
 
-# ImGui sources
+# ImGui
 set(IMGUI_DIR include/imgui)
-
-set(IMGUI_SOURCES
+target_sources(${PROJECT_NAME} PRIVATE
     ${IMGUI_DIR}/imgui.cpp
     ${IMGUI_DIR}/imgui_draw.cpp
     ${IMGUI_DIR}/imgui_tables.cpp
@@ -30,14 +30,17 @@ set(IMGUI_SOURCES
     ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
     ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
 )
-
-target_sources(${PROJECT_NAME} PRIVATE ${IMGUI_SOURCES})
-
 target_include_directories(${PROJECT_NAME} PRIVATE ${IMGUI_DIR})
 
+# # Assimp
+# set(ASSIMP_LIB ${CMAKE_SOURCE_DIR}/includee/assimp/lib/libassimp.dll.a)
+# set(ASSIMP_INCLUDE ${CMAKE_SOURCE_DIR}/include/assimp/include)
+# target_include_directories(${PROJECT_NAME} PRIVATE ${ASSIMP_INCLUDE})
 
-# Find and link fmt
+# Find and link packages
+# set(CMAKE_PREFIX_PATH "C:/Libraries/assimp")
+find_package(assimp REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE glfw OpenGL::GL)
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw OpenGL::GL assimp::assimp)
 

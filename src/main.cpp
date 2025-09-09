@@ -21,6 +21,9 @@
 #include<imgui.h>
 #include<imgui/backends/imgui_impl_glfw.h>
 #include<imgui/backends/imgui_impl_opengl3.h>
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 // Project Packages
 #include<project/Shader.h>
@@ -31,6 +34,7 @@
 #include<project/Optional.h>
 #include<project/Mesh.h>
 #include<project/Camera.h>
+#include<project/Light.h>
 
 
 // Parameters
@@ -182,35 +186,46 @@ int main(){
     glfwSetScrollCallback(window, Scroll_Callback);
 
 
-    // Light Data - Easier for Debugging
-    glm::vec3 lightColor =  glm::vec3(1.0, 1.0, 1.0);
-    glm::vec3 lightPos = glm::vec3(5, 4, 1);
-
-    // Sending Uniform Data
-    for (Shader shader : shaderList)
-    {
-        shader.Enable();
-        glUniform3fv(glGetUniformLocation(shader.ID, "lightColor"), 1, glm::value_ptr(lightColor));
-    }
-
+    // Light
     glm::vec3 materialAmbient = glm::vec3(1.0f, 0.5f, 0.31f);
     glm::vec3 materialSpecular = glm::vec3(0.5, 0.5, 0.5);
     const float materialShininess = 32.0f;
+
+    glm::vec3 lightColor =  glm::vec3(1.0, 1.0, 1.0);
+    glm::vec3 lightPos = glm::vec3(5, 4, 1);
+    glm::vec3 lightDirection = glm::vec3(0.2, -1, -0.3);
 
     glm::vec3 lightAmbient = glm::vec3(0.2, 0.2, 0.2);
     glm::vec3 lightDiffuse = glm::vec3(0.5, 0.5, 0.5);
     glm::vec3 lightSpecular = glm::vec3(1, 1, 1);
 
+    float attenuationConstant = 1.0f;
+    float attenuationLinear = 0.01f;
+    float attenuationQuadratic = 0.001f;
+
+    Light dirLight = Light::Directional(lightDirection);
+    Light pointLight = Light::Point(lightPos, attenuationConstant, attenuationLinear, attenuationQuadratic);
+    Light spotLight = Light::Spotlight(camera.Position, camera.Front, 2, 4);
+    dirLight.LightProperties(lightAmbient, lightDiffuse, lightSpecular);
+    pointLight.LightProperties(lightAmbient, lightDiffuse, lightSpecular);
+    spotLight.LightProperties(lightAmbient, lightDiffuse, lightSpecular);
+
+    // Sending Uniform Data
+    lightShader.Enable();
+    glUniform3fv(glGetUniformLocation(lightShader.ID, "lightColor"), 1, glm::value_ptr(lightColor));
+
     shaderProgram.Enable();
-    glUniform3fv(glGetUniformLocation(shaderProgram.ID, "lightPos"), 1, glm::value_ptr(lightPos));
     glUniform3fv(glGetUniformLocation(shaderProgram.ID, "material.ambient"), 1, glm::value_ptr(materialAmbient));
     glUniform3fv(glGetUniformLocation(shaderProgram.ID, "material.diffuse"), 1,  glm::value_ptr(materialAmbient));
     glUniform3fv(glGetUniformLocation(shaderProgram.ID, "material.specular"), 1,  glm::value_ptr(materialSpecular));
     glUniform1fv(glGetUniformLocation(shaderProgram.ID, "material.shininess"), 1, &materialShininess);
 
-    glUniform3fv(glGetUniformLocation(shaderProgram.ID, "light.ambient"), 1, glm::value_ptr(lightAmbient));
-    glUniform3fv(glGetUniformLocation(shaderProgram.ID, "light.diffuse"), 1,  glm::value_ptr(lightDiffuse));
-    glUniform3fv(glGetUniformLocation(shaderProgram.ID, "light.specular"), 1,  glm::value_ptr(lightSpecular));
+    // dirLight.ShaderData(shaderProgram);
+    // pointLight.ShaderData(shaderProgram);
+    spotLight.ShaderData(shaderProgram);
+
+    Assimp::Importer importer;
+    const aiScene* scene = importer.ReadFile("model.obj", aiProcess_Triangulate);
 
     while(!glfwWindowShouldClose(window))
     {   
@@ -250,6 +265,10 @@ int main(){
         lightCube.ChangePosition(lightPos);
         lightCube.Draw(lightShader, "model");
 
+        spotLight.Direction = camera.Front;
+        spotLight.Position = camera.Position;
+        spotLight.ShaderData(shaderProgram);
+
 
         // ------ Debugging ------
         // Start a new ImGui frame
@@ -265,7 +284,7 @@ int main(){
             camera.Position.y, 
             camera.Position.z);
         ImGui::Text("Front: %.2f, %.2f, %.2f", 
-            camera.Front.x, 
+            camera.Front.x,     
             camera.Front.y, 
             camera.Front.z);
 
