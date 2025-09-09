@@ -9,8 +9,8 @@ uniform vec3 cameraPos;
 
 // Natural reflected color
 struct Material {
-    sampler2D diffuse;
-    sampler2D specular;
+    sampler2D diffuse[3];
+    sampler2D specular[3];
     float shininess;
 }; 
 

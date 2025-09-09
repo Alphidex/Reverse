@@ -11,10 +11,9 @@ ebo(indices.data(), indices.size() * sizeof(unsigned int))
     vbo.Bind();
     ebo.Bind();
 
-    vao.LinkAttrib(vbo, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, coord));
-    vao.LinkAttrib(vbo, 1, 4, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, color));
-    vao.LinkAttrib(vbo, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
-    vao.LinkAttrib(vbo, 3, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, normal));
+    vao.LinkAttrib(vbo, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, Coord));
+    vao.LinkAttrib(vbo, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
+    vao.LinkAttrib(vbo, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, TexCoord));
 
     vao.Unbind();
     vbo.Unbind();
@@ -36,22 +35,30 @@ void Mesh::Draw(Shader& shader, const char* uniform)
 {
     shader.Enable();
 
+    // Transformations
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, Position);
     model = glm::rotate(model, Rotation, RotationAxis);
     model = glm::scale(model, Scale);
-
     glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(model));
 
     // Drawing
-    vao.Bind();
-    if (drawTexture)
-        for (int i = 0; i < Textures.size(); ++i)
-        {
-            Texture texture = Textures[i];
-            texture.Bind(shader, TextureUniforms[i].c_str());
-        }
+    unsigned int diffuseNr = 1;
+    unsigned int specularNr = 1;
+    for(unsigned int i = 0; i < Textures.size(); i++)
+    {
+        std::string number;
+        std::string texType = Textures[i].type;
+        if(texType == "diffuse")
+            number = std::to_string(diffuseNr++);
+        else if(texType == "specular")
+            number = std::to_string(specularNr++);
 
+        const char* name = ("material." + texType + number).c_str();
+        Textures[i].Bind(shader, name);
+    }
+
+    vao.Bind();
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     vao.Unbind();
 }
