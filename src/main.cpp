@@ -21,9 +21,6 @@
 #include<imgui.h>
 #include<imgui/backends/imgui_impl_glfw.h>
 #include<imgui/backends/imgui_impl_opengl3.h>
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
 
 // Project Packages
 #include<project/Shader.h>
@@ -35,6 +32,7 @@
 #include<project/Mesh.h>
 #include<project/Camera.h>
 #include<project/Light.h>
+#include<project/Model.h>
 
 
 // Parameters
@@ -53,44 +51,7 @@ std::string getFileContents(const char* filename);
 void shaderErrors(unsigned int& shader, std::string type);
 
 // Data
-std::vector<Vertex> vertices = {
-    // Positions             // Color           // Texture Coords  // Normals
-    // Front face (Z = 0.5)
-    {{-0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}}, // bottom-left
-    {{ 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}}, // bottom-right
-    {{ 0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}}, // top-right
-    {{-0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}}, // top-left
 
-    // Back face (Z = -0.5)
-    {{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}, {0.0f, 0.0f, -1.0f}}, // bottom-right
-    {{ 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}, {0.0f, 0.0f, -1.0f}}, // bottom-left
-    {{ 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}, {0.0f, 0.0f, -1.0f}}, // top-left
-    {{-0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}, {0.0f, 0.0f, -1.0f}}, // top-right
-
-    // Left face (X = -0.5)
-    {{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}}, // bottom-right
-    {{-0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}}, // bottom-left
-    {{-0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}, {-1.0f, 0.0f, 0.0f}}, // top-left
-    {{-0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}, {-1.0f, 0.0f, 0.0f}}, // top-right
-
-    // Right face (X = 0.5)
-    {{ 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}, {1.0f, 0.0f, 0.0f}}, // bottom-right
-    {{ 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}}, // bottom-left
-    {{ 0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}, {1.0f, 0.0f, 0.0f}}, // top-left
-    {{ 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}, {1.0f, 0.0f, 0.0f}}, // top-right
-
-    // Top face (Y = 0.5)
-    {{-0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}, {0.0f, 1.0f, 0.0f}}, // bottom-left
-    {{-0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}}, // bottom-right
-    {{ 0.5f,  0.5f,  0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}, {0.0f, 1.0f, 0.0f}}, // top-right
-    {{ 0.5f,  0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}, {0.0f, 1.0f, 0.0f}}, // top-left
-
-    // Bottom face (Y = -0.5)
-    {{-0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 1.0f}, {0.0f, -1.0f, 0.0f}}, // top-right
-    {{-0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {1.0f, 0.0f}, {0.0f, -1.0f, 0.0f}}, // bottom-right
-    {{ 0.5f, -0.5f,  0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f}, {0.0f, -1.0f, 0.0f}}, // bottom-left
-    {{ 0.5f, -0.5f, -0.5f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}, {0.0f, -1.0f, 0.0f}}  // top-left
-};
 
 std::vector<unsigned int> indices = {  
     // Front face
@@ -176,10 +137,10 @@ int main(){
     std::vector<std::string> textureUniforms = {"material.diffuse", "material.specular"};
 
     // Mesh Setup
-    Mesh regularCube(vertices, indices);
-    regularCube.AddTextures(textures, textureUniforms);
+    // Mesh regularCube(vertices, indices);
+    // regularCube.AddTextures(textures, textureUniforms);
 
-    Mesh lightCube(vertices, indices);
+    // Mesh lightCube(vertices, indices);
 
     // Camera
     Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -222,10 +183,7 @@ int main(){
 
     // dirLight.ShaderData(shaderProgram);
     // pointLight.ShaderData(shaderProgram);
-    spotLight.ShaderData(shaderProgram);
-
-    Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile("model.obj", aiProcess_Triangulate);
+    // spotLight.ShaderData(shaderProgram);
 
     while(!glfwWindowShouldClose(window))
     {   
@@ -254,16 +212,8 @@ int main(){
             glm::vec3(-1.3f,  1.0f, -1.5f)  
         };
 
-        for (int i = 0; i < cubePositions.size(); i++){
-            regularCube.ChangePosition(cubePositions[i]);
-            regularCube.ChangeRotation((float)glfwGetTime() + i * 15, glm::vec3(0.5f, 1.0f, 0.0f));
-            shaderProgram.Enable();
-            glUniform3fv(glGetUniformLocation(shaderProgram.ID, "cameraPos"), 1, glm::value_ptr(camera.Position));
-            regularCube.Draw(shaderProgram, "model");
-        }
-    
-        lightCube.ChangePosition(lightPos);
-        lightCube.Draw(lightShader, "model");
+        // lightCube.ChangePosition(lightPos);
+        // lightCube.Draw(lightShader, "model");
 
         spotLight.Direction = camera.Front;
         spotLight.Position = camera.Position;

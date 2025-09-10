@@ -18,6 +18,7 @@ add_executable(${PROJECT_NAME}
     src/Mesh.cpp
     src/Camera.cpp
     src/Light.cpp
+    src/Model.cpp
 )
 
 # ImGui
@@ -32,13 +33,7 @@ target_sources(${PROJECT_NAME} PRIVATE
 )
 target_include_directories(${PROJECT_NAME} PRIVATE ${IMGUI_DIR})
 
-# # Assimp
-# set(ASSIMP_LIB ${CMAKE_SOURCE_DIR}/includee/assimp/lib/libassimp.dll.a)
-# set(ASSIMP_INCLUDE ${CMAKE_SOURCE_DIR}/include/assimp/include)
-# target_include_directories(${PROJECT_NAME} PRIVATE ${ASSIMP_INCLUDE})
-
 # Find and link packages
-# set(CMAKE_PREFIX_PATH "C:/Libraries/assimp")
 find_package(assimp REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
