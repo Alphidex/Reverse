@@ -2,7 +2,8 @@
 
 Texture::Texture() {};
 
-Texture::Texture(const char* filePath, int texUnit){
+Texture::Texture(const char* filePath, const char* type): Path(filePath), Type(type)
+{
     glGenTextures(1, &ID);
     glBindTexture(GL_TEXTURE_2D, ID);
 
@@ -23,13 +24,13 @@ Texture::Texture(const char* filePath, int texUnit){
         glGenerateMipmap(GL_TEXTURE_2D);
     } else {
         std::cout << "Failed to load texture" << std::endl;
+        std::cout << "Path Provided: " << Path << std::endl;
     }
     stbi_image_free(data);
     glBindTexture(GL_TEXTURE_2D, 0);
-    this->texUnit = texUnit;
 }
 
-void Texture::Bind(Shader& shader, const char* uniform)
+void Texture::Bind(Shader& shader, const char* uniform, int texUnit)
 {
     glActiveTexture(GL_TEXTURE0 + texUnit);
     glBindTexture(GL_TEXTURE_2D, ID);

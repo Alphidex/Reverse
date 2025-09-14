@@ -1,8 +1,8 @@
 #include<project/Mesh.h>
 #include <stdexcept>
 
-Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices): 
-vertices(vertices), indices(indices),
+Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture>& textures): 
+Vertices(vertices), Indices(indices), Textures(textures),
 vao(),
 vbo(vertices.data(), vertices.size() * sizeof(Vertex)),
 ebo(indices.data(), indices.size() * sizeof(unsigned int))
@@ -11,24 +11,13 @@ ebo(indices.data(), indices.size() * sizeof(unsigned int))
     vbo.Bind();
     ebo.Bind();
 
-    vao.LinkAttrib(vbo, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, Coord));
-    vao.LinkAttrib(vbo, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, Normal));
-    vao.LinkAttrib(vbo, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, TexCoord));
+    vao.LinkAttrib(vbo, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, Vertex::Position));
+    vao.LinkAttrib(vbo, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, Vertex::Normal));
+    vao.LinkAttrib(vbo, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, Vertex::TexCoord));
 
     vao.Unbind();
     vbo.Unbind();
     ebo.Unbind();
-}
-
-void Mesh::AddTextures(std::vector<Texture>& textures, std::vector<std::string>& uniforms)
-{
-    if (textures.size() != uniforms.size()) {
-        throw std::runtime_error("Size mismatch: textures (" + std::to_string(textures.size()) + 
-                                ") vs uniforms (" + std::to_string(uniforms.size()) + ")");
-    }
-    Textures = textures;
-    TextureUniforms = uniforms;
-    drawTexture = true;
 }
 
 void Mesh::Draw(Shader& shader, const char* uniform)
@@ -48,18 +37,19 @@ void Mesh::Draw(Shader& shader, const char* uniform)
     for(unsigned int i = 0; i < Textures.size(); i++)
     {
         std::string number;
-        std::string texType = Textures[i].type;
+        std::string texType = Textures[i].Type;
         if(texType == "diffuse")
             number = std::to_string(diffuseNr++);
         else if(texType == "specular")
             number = std::to_string(specularNr++);
 
-        const char* name = ("material." + texType + number).c_str();
-        Textures[i].Bind(shader, name);
+        // const char* name = ("material." + texType + "[" + number + "]").c_str();
+        const char* name = "diffuse[0]";
+        Textures[i].Bind(shader, name, i);
     }
 
     vao.Bind();
-    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
     vao.Unbind();
 }
 

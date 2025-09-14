@@ -9,23 +9,15 @@ uniform vec3 cameraPos;
 
 // Natural reflected color
 struct Material {
-    sampler2D diffuse[3];
-    sampler2D specular[3];
+    sampler2D diffuse;
+    sampler2D specular;
     float shininess;
 }; 
 
 uniform Material material;
 
-// Light color * strength of components
-// struct Light {
-//     vec3 position;
-  
-//     vec3 ambient;
-//     vec3 diffuse;
-//     vec3 specular;
-// };
-
-// uniform Light light;  
+// uniform sampler2D diffuse[3];
+// uniform sampler2D specular[3];
 
 struct DirLight {
     vec3 direction;
@@ -69,13 +61,9 @@ void main()
 {   
     vec3 normal = normalize(Normal);
     vec3 viewDir = normalize(cameraPos - FragPos); 
-    vec3 result = vec3(0.0);
+    vec4 result = texture(material.diffuse, texCoord);
 
-    // result += CalcDirectionalLight(dirLight, normal, viewDir);
-    // result += CalcPointLight(pointLight, normal, FragPos, viewDir);
-    result += CalcSpotLight(spotLight, normal, FragPos, viewDir);
-
-    FragColor = vec4(result, 1.0);
+    FragColor = result;
 } 
 
 

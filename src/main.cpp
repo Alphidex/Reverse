@@ -10,6 +10,7 @@
 #include<thread>
 #include<chrono>
 #include<vector>
+#include <filesystem>
 
 // External Packages
 #include<glad/glad.h> // Assigns function pointers since OpenGL is a specification
@@ -47,43 +48,7 @@ double deltaTime = 0;
 // Callback Functions
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
-std::string getFileContents(const char* filename);
-void shaderErrors(unsigned int& shader, std::string type);
 
-// Data
-
-
-std::vector<unsigned int> indices = {  
-    // Front face
-    0, 1, 2,  
-    2, 3, 0,
-
-    // Back face
-    4, 5, 6,
-    6, 7, 4,
-
-    // Left face
-    8, 9, 10,
-    10, 11, 8,
-
-    // Right face
-    12, 13, 14,
-    14, 15, 12,
-
-    // Top face
-    16, 17, 18,
-    18, 19, 16,
-
-    // Bottom face
-    20, 21, 22,
-    22, 23, 20
-};
-
-
-
-
-// TODO:
-// Create a Light Class and make it Inherit from Mesh
 
 int main(){
     // As it starts out in: "C:\\Users\\.User\\Desktop\\Reverse\\out\\build\\default"
@@ -116,11 +81,7 @@ int main(){
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
-
-    // Setup Dear ImGui style
     ImGui::StyleColorsDark();
-
-    // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
     
@@ -129,18 +90,8 @@ int main(){
     Shader lightShader("shader/light.vert", "shader/light.frag");
     std::vector<Shader> shaderList = {shaderProgram, lightShader};
 
-
-    // Texture
-    Texture texture1("resource/container.png", 0);
-    Texture texture2("resource/container_specular.png", 1);
-    std::vector<Texture> textures = {texture1, texture2};
-    std::vector<std::string> textureUniforms = {"material.diffuse", "material.specular"};
-
-    // Mesh Setup
-    // Mesh regularCube(vertices, indices);
-    // regularCube.AddTextures(textures, textureUniforms);
-
-    // Mesh lightCube(vertices, indices);
+    // Models
+    Model model("resource/backpack/backpack.obj");
 
     // Camera
     Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -176,14 +127,6 @@ int main(){
     glUniform3fv(glGetUniformLocation(lightShader.ID, "lightColor"), 1, glm::value_ptr(lightColor));
 
     shaderProgram.Enable();
-    glUniform3fv(glGetUniformLocation(shaderProgram.ID, "material.ambient"), 1, glm::value_ptr(materialAmbient));
-    glUniform3fv(glGetUniformLocation(shaderProgram.ID, "material.diffuse"), 1,  glm::value_ptr(materialAmbient));
-    glUniform3fv(glGetUniformLocation(shaderProgram.ID, "material.specular"), 1,  glm::value_ptr(materialSpecular));
-    glUniform1fv(glGetUniformLocation(shaderProgram.ID, "material.shininess"), 1, &materialShininess);
-
-    // dirLight.ShaderData(shaderProgram);
-    // pointLight.ShaderData(shaderProgram);
-    // spotLight.ShaderData(shaderProgram);
 
     while(!glfwWindowShouldClose(window))
     {   
@@ -198,26 +141,7 @@ int main(){
 
         // Drawing
         camera.Update(window, deltaTime, shaderList, "cameraView");
-
-        std::vector<glm::vec3> cubePositions = {
-            glm::vec3( 0.0f,  0.0f,  -2.0f), 
-            glm::vec3( 2.0f,  5.0f, -15.0f), 
-            glm::vec3(-1.5f, -2.2f, -2.5f),  
-            glm::vec3(-3.8f, -2.0f, -12.3f),  
-            glm::vec3( 2.4f, -0.4f, -3.5f),  
-            glm::vec3(-1.7f,  3.0f, -7.5f),  
-            glm::vec3( 1.3f, -2.0f, -2.5f),  
-            glm::vec3( 1.5f,  2.0f, -2.5f), 
-            glm::vec3( 1.5f,  0.2f, -1.5f), 
-            glm::vec3(-1.3f,  1.0f, -1.5f)  
-        };
-
-        // lightCube.ChangePosition(lightPos);
-        // lightCube.Draw(lightShader, "model");
-
-        spotLight.Direction = camera.Front;
-        spotLight.Position = camera.Position;
-        spotLight.ShaderData(shaderProgram);
+        model.Draw(shaderProgram);
 
 
         // ------ Debugging ------
@@ -250,6 +174,7 @@ int main(){
         deltaTime = endTime - startTime;
     }
 
+    // Clean-up
     for (Shader shader : shaderList){
         shader.Delete();
     }

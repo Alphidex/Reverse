@@ -23,7 +23,7 @@
 class Mesh
 {
 public:    
-    Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices);
+    Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture>& textures);
     void Draw(Shader& shader, const char* uniform);
     void Delete();
     void AddTextures(std::vector<Texture>& textures, std::vector<std::string>& uniforms);
@@ -32,11 +32,10 @@ public:
     void ChangeScale(glm::vec3 scale);
     
 private:
-    std::vector<Vertex> vertices;
-    std::vector<unsigned int> indices;
+    std::vector<Vertex> Vertices;
+    std::vector<unsigned int> Indices;
     std::vector<Texture> Textures;
     std::vector<std::string> TextureUniforms;
-    bool drawTexture = false;
     
     VAO vao;
     EBO ebo;

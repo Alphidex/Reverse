@@ -10,14 +10,12 @@
 class Texture
 {
 public:
-    std::string type {};
-    Texture();
-    Texture(const char* filePath, int texUnit);
-    void Bind(Shader& shader, const char* uniform);
-
-private:
     GLuint ID;
-    GLint texUnit;
+    std::string Type {};
+    std::string Path {};
+    Texture();
+    Texture(const char* filePath, const char* type);
+    void Bind(Shader& shader, const char* uniform, int texUnit);
 };
 
 #endif

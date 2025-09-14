@@ -1,8 +1,10 @@
 #ifndef MODEL_H
 #define MODEL_H
 
+#include<map>
 #include<string>
 #include<vector>
+#include<map>
 // External Packages
 #include<glad/glad.h>
 #include<glfw/glfw3.h>
@@ -20,16 +22,16 @@ class Model
 public:
     Model(std::string path);
     void Draw(Shader& shader);
+
 private:
-    // model data
     vector<Mesh> Meshes;
     string Directory;
-
+    std::map<string, Texture> loadedTextures;
+    
     void loadModel(string path);
     void processNode(aiNode *node, const aiScene *scene);
     Mesh processMesh(aiMesh *mesh, const aiScene *scene);
-    vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, 
-                                            string typeName);
+    vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName);
 };
 
 #endif
