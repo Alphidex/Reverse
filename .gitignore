@@ -6,6 +6,7 @@
 *.lib
 *.pdb
 *.ilk
+out/
 
 # CMake
 build/
