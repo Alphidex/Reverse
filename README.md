@@ -13,5 +13,4 @@ Reverse Engineering a Game Engine
 
 ---
 
-# Here's a Sakura {Though change it to Reverse Logo}
-![sakura tree](resource/tree.jpg)
+![Reverse Logo](resource/ReverseLogo.png)
