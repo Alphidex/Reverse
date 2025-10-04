@@ -19,19 +19,21 @@ add_executable(${PROJECT_NAME}
     src/Camera.cpp
     src/Light.cpp
     src/Model.cpp
+    src/Program.cpp
+    src/Interface.cpp
 )
 
-# ImGui
-set(IMGUI_DIR include/imgui)
-target_sources(${PROJECT_NAME} PRIVATE
-    ${IMGUI_DIR}/imgui.cpp
-    ${IMGUI_DIR}/imgui_draw.cpp
-    ${IMGUI_DIR}/imgui_tables.cpp
-    ${IMGUI_DIR}/imgui_widgets.cpp
-    ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
-    ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
-)
-target_include_directories(${PROJECT_NAME} PRIVATE ${IMGUI_DIR})
+# # ImGui
+# set(IMGUI_DIR include/imgui)
+# target_sources(${PROJECT_NAME} PRIVATE
+#     ${IMGUI_DIR}/imgui.cpp
+#     ${IMGUI_DIR}/imgui_draw.cpp
+#     ${IMGUI_DIR}/imgui_tables.cpp
+#     ${IMGUI_DIR}/imgui_widgets.cpp
+#     ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
+#     ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
+# )
+# target_include_directories(${PROJECT_NAME} PRIVATE ${IMGUI_DIR})
 
 # Find and link packages
 find_package(assimp REQUIRED)
