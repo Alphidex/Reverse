@@ -13,4 +13,4 @@ Reverse Engineering a Game Engine
 
 ---
 
-![Reverse Logo](resource/ReverseLogo.png)
+![Reverse Logo](resource/textures/ReverseLogo.png)
