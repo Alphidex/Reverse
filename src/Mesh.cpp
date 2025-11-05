@@ -23,7 +23,7 @@ ebo(indices.data(), indices.size() * sizeof(unsigned int))
 void Mesh::Draw(Shader& shader, const char* uniform)
 {
     shader.Enable();
-
+    
     // Transformations
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, Position);

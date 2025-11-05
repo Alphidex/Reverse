@@ -22,7 +22,8 @@
 
 class Mesh
 {
-public:    
+public:
+    Mesh() = default;    
     Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture>& textures);
     void Draw(Shader& shader, const char* uniform);
     void Delete();
@@ -45,6 +46,11 @@ private:
     float Rotation = 0.0f;
     glm::vec3 RotationAxis = glm::vec3(0, 0, 1);
     glm::vec3 Scale = glm::vec3(1, 1, 1);
+};
+
+class Mesh2D : Mesh
+{
+
 };
 
 #endif
