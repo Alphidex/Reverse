@@ -26,12 +26,16 @@ int main(){
     Interface interface(width, height, window);
 
     // Shader Setup
-    // Shader shaderProgram("shader/default.vert", "shader/default.frag");
-    // shaderProgram.Enable();
+    Shader shaderProgram("shader/default.vert", "shader/default.frag");
+    Shader interfaceProgram("shader/interface.vert", "shader/interface.frag");
 
     // Camera
     // Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
     // glfwSetScrollCallback(window, Scroll_Callback);
+
+    // Interface
+    Interface ui(window, interfaceProgram);
+    Container box2D = ui.CreateContainer(0.2, 0.2, 0.5, 0.5);
 
     while(interface.IsOpen())
     {   
@@ -46,6 +50,7 @@ int main(){
         // // Drawing
         // camera.Update(window, deltaTime, shaderList, "cameraView");
         // model.Draw(shaderProgram);
+        ui.DrawContainer(box2D);
 
         auto endTime = glfwGetTime();
         deltaTime = endTime - startTime;

@@ -1,34 +1,39 @@
 #pragma once
 
 #include <glad/glad.h>
-#include <glfw/glfw3.h>
+#include <GLFW/glfw3.h>
 
 #include <vector>
 #include <project/Optional.h>
-#include <project/Mesh.h>
+#include <project/Shader.h>
+#include <project/Drawable.h>
+
+class Interface;
+class Container;
 
 class Interface
 {
 public:
-    Interface(int width, int height, GLFWwindow* window);
+    Interface(GLFWwindow* window, Shader& shader);
     bool IsOpen();
     void ClearBackgroundColor(float r, float g, float b, float a);
-    void CreateContainer(int x, int y, int width, int height);
+    Container CreateContainer(float x, float y, float width, float height);
+    void DrawContainer(Container& contaienr);
 
 private:
-    int width;
-    int height;
     GLFWwindow* window;
+    Shader shader;
 };
 
 // Fancy name for 2D box: Though the implimentation will change later to make it more abstract
 class Container
 {
 public:
-    Container(int x, int y, int width, int height, GLFWwindow* window);
+    Container(float x, float y, float width, float height, GLFWwindow* window, Shader& shader);
     void Draw();
+    void Delete();
 private:
+    Drawable brush;
     std::vector<Vertex> Vertices;
     std::vector<unsigned int> Indices;
-    Mesh Box2D;
 };

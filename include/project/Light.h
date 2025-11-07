@@ -1,7 +1,7 @@
 #ifndef LIGHT_H
 #define LIGHT_H
 #include<glad/glad.h>
-#include<glfw/glfw3.h>
+#include<GLFW/glfw3.h>
 #include<glm/glm.hpp>
 #include<glm/gtc/type_ptr.hpp>
 #include<project/Shader.h>
