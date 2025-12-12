@@ -1,13 +1,12 @@
-#ifndef CAMERA_H
-#define CAMERA_H
+#pragma once
 
 #include<glm/glm.hpp>
 #include<glm/gtc/matrix_transform.hpp>
 #include<glm/gtc/type_ptr.hpp>
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
-#include<project/Shader.h>
 #include<vector>
+#include "Shader.h"
 
 class Camera
 {
@@ -47,4 +46,3 @@ private:
 
 void Scroll_Callback(GLFWwindow* window, double xoffset, double yoffset);
 
-#endif

@@ -1,22 +1,25 @@
+#pragma once
+
 // System Packages
 #include<vector>
 #include<string>
-using std::vector;
 
 // Project Packages
-#include<project/Optional.h>
-#include<project/VAO.h>
-#include<project/VBO.h>
-#include<project/EBO.h>
-#include<project/Texture.h>
-#include<project/Shader.h>
+#include "VAO.h"
+#include "VBO.h"
+#include "EBO.h"
+#include "Texture.h"
+#include "Shader.h"
+
+
+using std::vector;
 
 // Generic Drawable Class. Anything that draws should inherit from it.
 // Responsible for managing the buffer stack.
 // Every object should have its own implementation of Draw.
 class Drawable{
 public:
-    Drawable(Shader& shader, vector<Vertex>& vertices, vector<unsigned int>& indices, vector<Texture> textures = {});
+    Drawable(Shader& shader, vector<Vertex>& vertices, vector<unsigned int>& indices, vector<Texture>& textures);
     void Draw();
     void Delete();
 

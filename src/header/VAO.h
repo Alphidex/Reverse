@@ -1,5 +1,4 @@
-#ifndef VAO_H
-#define VAO_H
+#pragma once
 
 #include<glad/glad.h>
 #include"VBO.h"
@@ -7,7 +6,6 @@
 class VAO
 {
 public:
-	GLuint ID;
 	VAO();
 
 	// Define layout attributes
@@ -15,5 +13,7 @@ public:
 	void Bind();
 	void Unbind();
 	void Delete();
+
+private:
+	GLuint ID;
 };
-#endif

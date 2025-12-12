@@ -2,14 +2,12 @@
 Reverse Engineering a Game Engine
 
 ## TO DOs:
-### General
-1. Create a Light Class and make it Inherit from Mesh
-2. Experiment with other Models
-
-### Features
-1. Rotating, Translating, Scaling Objects in Game
-2. Work on UI
-3. Create axis
+1. Setting up the Light class and model.
+2. Cleaning up the other files/classes.
+3. Experiment importing other models.
+4. Add world basis. 
+5. Add feature to modify model position, size and rotation in real time.
+6. Work on UI, has to be delayed. I don't know how to display text. Need to finsish course on OpenGL.
 
 ---
 

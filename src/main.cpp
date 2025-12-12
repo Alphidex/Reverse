@@ -1,6 +1,36 @@
-#include<SystemIncludes.h>
-#include<ExternalIncludes.h>
-#include<ProjectIncludes.h>
+// ===== System =====
+#include <iostream>
+#include <stdexcept>
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <cerrno>
+#include <filesystem>
+#include <thread>
+#include <chrono>
+#include <vector>
+
+// ===== External =====
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <stb/stb_image.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+// ===== Project =====
+#include "Shader.h"
+#include "VAO.h"
+#include "VBO.h"
+#include "EBO.h"
+#include "Texture.h"
+#include "Optional.h"
+#include "Mesh.h"
+#include "Camera.h"
+#include "Light.h"
+#include "Model.h"`
+#include "Program.h"
+#include "Interface.h"
 
 
 // Parameters
@@ -11,46 +41,39 @@ const int FPS = 60;
 double deltaTime = 0;
 
 int main(){
-    // As it starts out in: "C:\\Users\\.User\\Desktop\\Reverse\\out\\build\\default"
-    std::filesystem::current_path(std::filesystem::path(__FILE__).parent_path().parent_path());
-    std::cout << "Working directory: " << std::filesystem::current_path() << std::endl;
-
     /*
     {Program} contains all the GLFW/GLAD config settings.
     {Program} creates window, which must be passed to Interface class.
     */ 
     Program program(width, height);
-
-    /* Interface Setup. Responsible for anythin UI related */
     GLFWwindow* window = program.GetWindow();
-    Interface interface(width, height, window);
-
+    
     // Shader Setup
     Shader shaderProgram("shader/default.vert", "shader/default.frag");
     Shader interfaceProgram("shader/interface.vert", "shader/interface.frag");
-
+    
+    /* Interface Setup. Responsible for anythin UI related */
+    Interface ui(window, interfaceProgram);
+    Container box(0.2, 0.2, 0.7, 0.4, window, interfaceProgram); 
+    
     // Camera
     // Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
     // glfwSetScrollCallback(window, Scroll_Callback);
 
-    // Interface
-    Interface ui(window, interfaceProgram);
-    Container box2D = ui.CreateContainer(0.2, 0.2, 0.5, 0.5);
-
-    while(interface.IsOpen())
+    while(program.Running())
     {   
         auto startTime = glfwGetTime();
 
         program.ProcessEvents();
 
         // Clears the back-buffer with said color
-        interface.ClearBackgroundColor(0.2f, 0.3f, 0.3f, 1.0f);
+        ui.ClearBackgroundColor(0.2f, 0.3f, 0.3f, 1.0f);
         program.ClearBuffers();
 
         // // Drawing
         // camera.Update(window, deltaTime, shaderList, "cameraView");
         // model.Draw(shaderProgram);
-        ui.DrawContainer(box2D);
+        box.Draw();
 
         auto endTime = glfwGetTime();
         deltaTime = endTime - startTime;

@@ -1,10 +1,8 @@
-#ifndef MODEL_H
-#define MODEL_H
+#pragma once
 
 #include<map>
 #include<string>
 #include<vector>
-#include<map>
 // External Packages
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
@@ -13,25 +11,22 @@
 #include<assimp/postprocess.h>
 
 // Project Packages
-#include<project/Mesh.h>
-using std::string;
-using std::vector;
+#include "Mesh.h"
+using std::string, std::vector, std::map;
 
 class Model
 {
 public:
-    Model(std::string path);
+    Model(string path);
     void Draw(Shader& shader);
 
 private:
-    vector<Mesh> Meshes;
-    string Directory;
-    std::map<string, Texture> loadedTextures;
+    vector<Mesh> meshes;
+    string directory;
+    map<string, Texture> loadedTextures;
     
     void loadModel(string path);
     void processNode(aiNode *node, const aiScene *scene);
     Mesh processMesh(aiMesh *mesh, const aiScene *scene);
     vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, string typeName);
 };
-
-#endif

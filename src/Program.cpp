@@ -1,4 +1,4 @@
-#include <project/Program.h>
+#include "Program.h"
 
 // Callback Functions
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -53,6 +53,11 @@ void Program::Terminate()
 {
     glfwTerminate();
 }
+
+bool Program::Running()
+{
+    return !glfwWindowShouldClose(window);
+};
 
 GLFWwindow* Program::GetWindow()
 {

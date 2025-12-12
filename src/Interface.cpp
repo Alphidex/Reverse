@@ -1,32 +1,15 @@
-#include <project/Interface.h>
 #include<iostream>
+#include "Interface.h"
 
 Interface::Interface(GLFWwindow* window, Shader& shader) : window(window), shader(shader) 
 {
     
 };
 
-bool Interface::IsOpen()
-{
-    return !glfwWindowShouldClose(window);
-}
-
 void Interface::ClearBackgroundColor(float r, float g, float b, float a)
 {
     glClearColor(r, g, b, a);
 }
-
-Container Interface::CreateContainer(float x, float y, float width, float height)
-{
-    Container container(x, y, width, height, window, shader);
-    return container;
-}
-
-void Interface::DrawContainer(Container& container)
-{
-    container.Draw();
-}
-
 
 
 /*
@@ -63,15 +46,17 @@ Container::Container(float x, float y, float width, float height, GLFWwindow* wi
         1, 2, 3
     };
 
-    brush = Drawable(shader, vertices, indices);
+    std::vector<Texture> textures;
+    brush = new Drawable(shader, vertices, indices, textures);
 }
 
 void Container::Draw()
 {
-    brush.Draw();
+    brush->Draw();
 }
 
 void Container::Delete()
 {
-    brush.Delete();
+    brush->Delete();
+    delete brush;
 }

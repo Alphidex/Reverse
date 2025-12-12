@@ -4,9 +4,9 @@
 #include<glm/glm.hpp>
 #include<glm/gtc/matrix_transform.hpp>
 #include<glm/gtc/type_ptr.hpp>
-#include<project/Drawable.h>
+#include "Drawable.h"
 
-Drawable::Drawable(Shader& shader, vector<Vertex>& vertices, vector<unsigned int>& indices, vector<Texture> textures = {}): 
+Drawable::Drawable(Shader& shader, vector<Vertex>& vertices, vector<unsigned int>& indices, vector<Texture>& textures): 
 shader(shader),
 vertices(vertices), indices(indices), textures(textures),
 vao(),
@@ -33,7 +33,6 @@ void Drawable::Draw()
     vao.Bind();
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     vao.Unbind();
-
 }
 
 void Drawable::Delete()

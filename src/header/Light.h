@@ -1,10 +1,11 @@
-#ifndef LIGHT_H
-#define LIGHT_H
+#pragma once
+
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
 #include<glm/glm.hpp>
 #include<glm/gtc/type_ptr.hpp>
-#include<project/Shader.h>
+
+#include "Shader.h"
 
 enum LightType 
 { 
@@ -37,6 +38,3 @@ private:
     float InnerCutOff{};
     float OuterCutOff{};
 };
-
-
-#endif

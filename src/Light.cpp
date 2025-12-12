@@ -1,4 +1,4 @@
-#include<project/Light.h>
+#include "Light.h"
 
 Light Light::Directional(const glm::vec3& direction) {
     Light l;

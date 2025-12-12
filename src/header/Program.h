@@ -1,7 +1,6 @@
-#ifndef PROGRAM_H
-#define PROGRAM_H
+#pragma once
 
-#include <ExternalIncludes.h>
+#include <GLFW/glfw3.h>
 #include <iostream>
 
 /*
@@ -22,10 +21,9 @@ public:
     void SwapBuffers();
     void ClearBuffers();
     void Terminate();
+    bool Running();
 
 private:
-    GLFWwindow* window = NULL;
-    bool ERROR = false;
+    GLFWwindow* window;
+    bool ERROR;
 };
-
-#endif

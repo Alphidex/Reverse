@@ -2,11 +2,10 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-
 #include <vector>
-#include <project/Optional.h>
-#include <project/Shader.h>
-#include <project/Drawable.h>
+
+#include "Shader.h"
+#include "Drawable.h"
 
 class Interface;
 class Container;
@@ -33,7 +32,7 @@ public:
     void Draw();
     void Delete();
 private:
-    Drawable brush;
+    Drawable* brush;
     std::vector<Vertex> Vertices;
     std::vector<unsigned int> Indices;
 };
