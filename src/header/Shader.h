@@ -7,10 +7,13 @@
 #include<iostream>
 #include<cerrno>
 
+using std::string;
+
 class Shader
 {
 public:
     Shader(const char* vertexPath, const char* fragmentPath);
+    GLuint getID();
     void Enable();
     void Delete();
 

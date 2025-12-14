@@ -1,32 +1,32 @@
+#include <iostream>
 #include "Camera.h"
-#include<iostream>
 
-double Fov = 45;
+double fov = 45;
 
-Camera::Camera(glm::vec3 position) : Position(position) {}
+Camera::Camera(glm::vec3 position) : position(position) {}
 
 void Camera::KeyboardMovement(GLFWwindow* window, double deltaTime)
 {
-    float calibratedMovementSpeed = deltaTime * MovementSpeed;
+    float calibratedMovementSpeed = deltaTime * movementSpeed;
 
     // Movement
     if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        Position += Front * calibratedMovementSpeed;
+        position += front * calibratedMovementSpeed;
     if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        Position -= Front * calibratedMovementSpeed;
+        position -= front * calibratedMovementSpeed;
     if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        Position += glm::normalize(glm::cross(Front, Up)) * calibratedMovementSpeed;
+        position += glm::normalize(glm::cross(front, up)) * calibratedMovementSpeed;
     if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        Position -= glm::normalize(glm::cross(Front, Up)) * calibratedMovementSpeed;
+        position -= glm::normalize(glm::cross(front, up)) * calibratedMovementSpeed;
     if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
-        Position += Up * calibratedMovementSpeed;
+        position += up * calibratedMovementSpeed;
     if(glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-        Position -= Up * calibratedMovementSpeed;
+        position -= up * calibratedMovementSpeed;
     // Shifting
     if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-        MovementSpeed = shiftMovementSpeed;
+        movementSpeed = shiftMovementSpeed;
     if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
-        MovementSpeed = baseMovementSpeed;
+        movementSpeed = baseMovementSpeed;
 }
 
 void Camera::MouseMovement(GLFWwindow* window)
@@ -46,14 +46,14 @@ void Camera::MouseMovement(GLFWwindow* window)
         lastMousePos.x = currentMousePos.x;
         lastMousePos.y = currentMousePos.y;
 
-        offsetX *= MouseSensitivity;
-        offsetY *= MouseSensitivity;
+        offsetX *= mouseSensitivity;
+        offsetY *= mouseSensitivity;
 
-        Yaw += offsetX;
-        Pitch += offsetY;
+        yaw += offsetX;
+        pitch += offsetY;
 
-        if (Pitch > 89.0f) Pitch = 89.0f;
-        if (Pitch < -89.0f) Pitch = -89.0f;
+        if (pitch > 89.0f)  pitch = 89.0f;
+        if (pitch < -89.0f) pitch = -89.0f;
     }
 
     if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE){
@@ -65,7 +65,7 @@ void Camera::MouseMovement(GLFWwindow* window)
 void Camera::UpdateShader(Shader& shader, const char* uniform)
 {
     shader.Enable();
-    glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(CameraView));
+    glUniformMatrix4fv(glGetUniformLocation(shader.getID(), uniform), 1, GL_FALSE, glm::value_ptr(cameraView));
 }
 
 void Camera::Update(GLFWwindow* window, double deltaTime, std::vector<Shader>& shaderList, const char* uniform)
@@ -74,26 +74,26 @@ void Camera::Update(GLFWwindow* window, double deltaTime, std::vector<Shader>& s
     MouseMovement(window);
 
     // Looking
-    Front.x = cos(glm::radians(Pitch)) * cos(glm::radians(Yaw));
-    Front.y = sin(glm::radians(Pitch)); 
-    Front.z = cos(glm::radians(Pitch)) * sin(glm::radians(Yaw));
-    Front = glm::normalize(Front);
+    front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
+    front.y = sin(glm::radians(pitch)); 
+    front.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
+    front = glm::normalize(front);
 
     glm::mat4 view;
-    view = glm::lookAt(Position, Position + Front, Up);
+    view = glm::lookAt(position, position + front, up);
 
     // Zooming
     glm::mat4 projection;
-    projection = glm::perspective(glm::radians((float) Fov), 800.0f / 600.0f, 0.1f, 1000.0f);
+    projection = glm::perspective(glm::radians((float) fov), 800.0f / 600.0f, 0.1f, 1000.0f);
 
-    CameraView = projection * view;
+    cameraView = projection * view;
 
     for (Shader& shader : shaderList)
         UpdateShader(shader, uniform);
 }
 
 void Scroll_Callback(GLFWwindow* window, double xoffset, double yoffset){
-    Fov -= yoffset * 2;
-    if (Fov < 1.0f) Fov = 1.0f;
-    if (Fov > 45.0f) Fov = 45.0f;
+    fov -= yoffset * 2;
+    if (fov < 1.0f) fov = 1.0f;
+    if (fov > 45.0f) fov = 45.0f;
 }

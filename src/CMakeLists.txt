@@ -4,19 +4,21 @@ target_sources(Reverse PRIVATE
     main.cpp
     glad.c
     stb.cpp
-    Shader.cpp
-    Optional.cpp
-    EBO.cpp
-    VAO.cpp
+
+    # Source files
     VBO.cpp
+    VAO.cpp
+    EBO.cpp
+    Utilities.cpp
     Texture.cpp
+    Shader.cpp
     Mesh.cpp
     Camera.cpp
     Light.cpp
     Model.cpp
+    Drawable.cpp
     Program.cpp
     Interface.cpp
-    Drawable.cpp
 )
 
 target_include_directories(Reverse 
@@ -25,7 +27,5 @@ target_include_directories(Reverse
         ./header)
 
 # Find and link packages
-find_package(OpenGL REQUIRED)
-find_package(glfw3 REQUIRED)
-target_link_libraries(${PROJECT_NAME} PRIVATE assimp)
-target_link_libraries(${PROJECT_NAME} PRIVATE glfw OpenGL::GL)
+target_link_libraries(Reverse PRIVATE assimp)
+target_link_libraries(Reverse PRIVATE glfw)

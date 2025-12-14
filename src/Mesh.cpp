@@ -1,7 +1,7 @@
 #include "Mesh.h"
 
 Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture>& textures): 
-Vertices(vertices), Indices(indices), Textures(textures),
+vertices(vertices), indices(indices), textures(textures),
 vao(),
 vbo(vertices.data(), vertices.size() * sizeof(Vertex)),
 ebo(indices.data(), indices.size() * sizeof(unsigned int))
@@ -25,18 +25,18 @@ void Mesh::Draw(Shader& shader, const char* uniform)
     
     // Transformations
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, Position);
-    model = glm::rotate(model, Rotation, RotationAxis);
-    model = glm::scale(model, Scale);
-    glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(model));
+    model = glm::translate(model, position);
+    model = glm::rotate(model, rotation, rotationAxis);
+    model = glm::scale(model, scale);
+    glUniformMatrix4fv(glGetUniformLocation(shader.getID(), uniform), 1, GL_FALSE, glm::value_ptr(model));
 
     // Drawing
     unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;
-    for(unsigned int i = 0; i < Textures.size(); i++)
+    for(unsigned int i = 0; i < textures.size(); i++)
     {
         std::string number;
-        std::string texType = Textures[i].Type;
+        std::string texType = textures[i].getType();
         if(texType == "diffuse")
             number = std::to_string(diffuseNr++);
         else if(texType == "specular")
@@ -44,11 +44,11 @@ void Mesh::Draw(Shader& shader, const char* uniform)
 
         // const char* name = ("material." + texType + "[" + number + "]").c_str();
         const char* name = "diffuse[0]";
-        Textures[i].Bind(shader, name, i);
+        textures[i].Bind(shader, name, i);
     }
 
     vao.Bind();
-    glDrawElements(GL_TRIANGLES, Indices.size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     vao.Unbind();
 }
 
@@ -59,18 +59,17 @@ void Mesh::Delete()
     ebo.Delete();
 }
 
-void Mesh::ChangePosition(glm::vec3 position)
+void Mesh::setPosition(glm::vec3 position)
 {   
-    Position = position;
+    this->position = position;
 }
 
-void Mesh::ChangeRotation(float rotationDegrees, glm::vec3 axis)
+void Mesh::setRotation(float rotationDegrees, glm::vec3 axis)
 {
-    Rotation = glm::radians(rotationDegrees);
-    RotationAxis = axis;
+    this->rotation = glm::radians(rotationDegrees);
+    this->rotationAxis = axis;
 }
 
-void Mesh::ChangeScale(glm::vec3 scale)
-{
-    Scale = scale;
+void Mesh::setScale(glm::vec3 scale){
+    this->scale = scale;
 }

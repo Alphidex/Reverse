@@ -2,8 +2,8 @@
 
 void Model::Draw(Shader &shader)
 {
-    for(unsigned int i = 0; i < Meshes.size(); i++)
-        Meshes[i].Draw(shader, "model");
+    for(unsigned int i = 0; i < meshes.size(); i++)
+        meshes[i].Draw(shader, "model");
 } 
 
 Model::Model(std::string path)
@@ -16,7 +16,7 @@ Model::Model(std::string path)
         std::cout << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
         return;
     }
-    Directory = path.substr(0, path.find_last_of('/')) + "/";
+    directory = path.substr(0, path.find_last_of('/')) + "/";
 
     processNode(scene->mRootNode, scene);
 }
@@ -27,7 +27,7 @@ void Model::processNode(aiNode *node, const aiScene *scene)
     for(unsigned int i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh *mesh = scene->mMeshes[node->mMeshes[i]]; 
-        Meshes.push_back(processMesh(mesh, scene));			
+        meshes.push_back(processMesh(mesh, scene));			
     }
     // then do the same for each of its children
     for(unsigned int i = 0; i < node->mNumChildren; i++)
@@ -99,7 +99,7 @@ vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type,
         Texture texture;
         aiString str;
         mat->GetTexture(type, i, &str);
-        std::string path = Directory + std::string(str.C_Str());
+        std::string path = directory + std::string(str.C_Str());
         if (loadedTextures.count(path) > 0)
         {
             texture = loadedTextures[path];

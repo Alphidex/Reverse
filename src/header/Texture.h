@@ -14,6 +14,7 @@ public:
     Texture();
     Texture(const char* filePath, const char* type);
     void Bind(Shader& shader, const char* uniform, int texUnit);
+    string getType();
     
 private:
     GLuint ID;

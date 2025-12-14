@@ -10,6 +10,7 @@
 #include "EBO.h"
 #include "Texture.h"
 #include "Shader.h"
+#include "CoreTypes.h"
 
 
 using std::vector;

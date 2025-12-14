@@ -8,36 +8,34 @@
 #include<vector>
 #include "Shader.h"
 
+struct MousePosition 
+{
+    double x, y;
+};
+
 class Camera
 {
 public:
-    glm::vec3 Position;
-    glm::vec3 Front;
-
-    Camera(glm::vec3 Position);
+    Camera(glm::vec3 position);
     void Update(GLFWwindow* window, double deltaTime, std::vector<Shader>& shaderList, const char* uniform);
 
 private:
+    glm::vec3 front;
+    glm::vec3 position;
     bool firstClick = true;
-    float Yaw = -90.0f;
-    float Pitch = 0;
-    glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
-
-    struct MousePosition 
-    {
-        double x;
-        double y;
-    };
+    float yaw = -90.0f;
+    float pitch = 0;
+    glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
 
     MousePosition lastMousePos;
 
     float baseMovementSpeed = 30;
     float shiftMovementSpeed = 90;
 
-    float MovementSpeed = baseMovementSpeed;
-    float MouseSensitivity = 0.1f;
+    float movementSpeed = baseMovementSpeed;
+    float mouseSensitivity = 0.1f;
 
-    glm::mat4 CameraView = glm::mat4(1.0f);
+    glm::mat4 cameraView = glm::mat4(1.0f);
 
     void KeyboardMovement(GLFWwindow* window, double deltaTime);
     void MouseMovement(GLFWwindow* window);

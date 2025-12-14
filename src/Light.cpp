@@ -39,32 +39,32 @@ void Light::ShaderData(Shader& shader)
 {
     shader.Enable();
     
-    if (Type == DIRECTIONAL)
-    {
-        glUniform3fv(glGetUniformLocation(shader.ID, "dirLight.direction"), 1,  glm::value_ptr(Direction));
-        glUniform3fv(glGetUniformLocation(shader.ID, "dirLight.ambient"), 1, glm::value_ptr(Ambient));
-        glUniform3fv(glGetUniformLocation(shader.ID, "dirLight.diffuse"), 1,  glm::value_ptr(Diffuse));
-        glUniform3fv(glGetUniformLocation(shader.ID, "dirLight.specular"), 1,  glm::value_ptr(Specular));
-    }
-    if (Type == POINTLIGHT)
-    {
-        glUniform3fv(glGetUniformLocation(shader.ID, "pointLight.position"), 1,  glm::value_ptr(Position));
-        glUniform1fv(glGetUniformLocation(shader.ID, "pointLight.constant"), 1,  &attConstant);
-        glUniform1fv(glGetUniformLocation(shader.ID, "pointLight.linear"), 1,  &attLinear);
-        glUniform1fv(glGetUniformLocation(shader.ID, "pointLight.quadratic"), 1, &attQuadratic);
-        glUniform3fv(glGetUniformLocation(shader.ID, "pointLight.ambient"), 1, glm::value_ptr(Ambient));
-        glUniform3fv(glGetUniformLocation(shader.ID, "pointLight.diffuse"), 1,  glm::value_ptr(Diffuse));
-        glUniform3fv(glGetUniformLocation(shader.ID, "pointLight.specular"), 1,  glm::value_ptr(Specular));
-    }
+    // if (Type == DIRECTIONAL)
+    // {
+    //     glUniform3fv(glGetUniformLocation(shader.getID(), "dirLight.direction"), 1,  glm::value_ptr(Direction));
+    //     glUniform3fv(glGetUniformLocation(shader.ID, "dirLight.ambient"), 1, glm::value_ptr(Ambient));
+    //     glUniform3fv(glGetUniformLocation(shader.ID, "dirLight.diffuse"), 1,  glm::value_ptr(Diffuse));
+    //     glUniform3fv(glGetUniformLocation(shader.ID, "dirLight.specular"), 1,  glm::value_ptr(Specular));
+    // }
+    // if (Type == POINTLIGHT)
+    // {
+    //     glUniform3fv(glGetUniformLocation(shader.ID, "pointLight.position"), 1,  glm::value_ptr(Position));
+    //     glUniform1fv(glGetUniformLocation(shader.ID, "pointLight.constant"), 1,  &attConstant);
+    //     glUniform1fv(glGetUniformLocation(shader.ID, "pointLight.linear"), 1,  &attLinear);
+    //     glUniform1fv(glGetUniformLocation(shader.ID, "pointLight.quadratic"), 1, &attQuadratic);
+    //     glUniform3fv(glGetUniformLocation(shader.ID, "pointLight.ambient"), 1, glm::value_ptr(Ambient));
+    //     glUniform3fv(glGetUniformLocation(shader.ID, "pointLight.diffuse"), 1,  glm::value_ptr(Diffuse));
+    //     glUniform3fv(glGetUniformLocation(shader.ID, "pointLight.specular"), 1,  glm::value_ptr(Specular));
+    // }
 
-    if (Type == SPOTLIGHT)
-    {
-        glUniform3fv(glGetUniformLocation(shader.ID, "spotLight.direction"), 1,  glm::value_ptr(Direction));
-        glUniform3fv(glGetUniformLocation(shader.ID, "spotLight.position"), 1,  glm::value_ptr(Position));
-        glUniform3fv(glGetUniformLocation(shader.ID, "spotLight.ambient"), 1, glm::value_ptr(Ambient));
-        glUniform3fv(glGetUniformLocation(shader.ID, "spotLight.diffuse"), 1,  glm::value_ptr(Diffuse));
-        glUniform3fv(glGetUniformLocation(shader.ID, "spotLight.specular"), 1,  glm::value_ptr(Specular));
-        glUniform1fv(glGetUniformLocation(shader.ID, "spotLight.innerCutOff"), 1, &InnerCutOff);
-        glUniform1fv(glGetUniformLocation(shader.ID, "spotLight.outerCutOff"), 1, &OuterCutOff);
-    }
+    // if (Type == SPOTLIGHT)
+    // {
+    //     glUniform3fv(glGetUniformLocation(shader.ID, "spotLight.direction"), 1,  glm::value_ptr(Direction));
+    //     glUniform3fv(glGetUniformLocation(shader.ID, "spotLight.position"), 1,  glm::value_ptr(Position));
+    //     glUniform3fv(glGetUniformLocation(shader.ID, "spotLight.ambient"), 1, glm::value_ptr(Ambient));
+    //     glUniform3fv(glGetUniformLocation(shader.ID, "spotLight.diffuse"), 1,  glm::value_ptr(Diffuse));
+    //     glUniform3fv(glGetUniformLocation(shader.ID, "spotLight.specular"), 1,  glm::value_ptr(Specular));
+    //     glUniform1fv(glGetUniformLocation(shader.ID, "spotLight.innerCutOff"), 1, &InnerCutOff);
+    //     glUniform1fv(glGetUniformLocation(shader.ID, "spotLight.outerCutOff"), 1, &OuterCutOff);
+    // }
 }

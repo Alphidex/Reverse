@@ -1,34 +1,12 @@
-// ===== System =====
+// // ===== System =====
 #include <iostream>
-#include <stdexcept>
-#include <string>
-#include <fstream>
-#include <sstream>
-#include <cerrno>
-#include <filesystem>
-#include <thread>
-#include <chrono>
 #include <vector>
+#include <filesystem>
 
-// ===== External =====
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <stb/stb_image.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
-// ===== Project =====
-#include "Shader.h"
-#include "VAO.h"
-#include "VBO.h"
-#include "EBO.h"
-#include "Texture.h"
-#include "Optional.h"
-#include "Mesh.h"
+// // ===== Project =====
 #include "Camera.h"
 #include "Light.h"
-#include "Model.h"`
+#include "Model.h"
 #include "Program.h"
 #include "Interface.h"
 
@@ -40,7 +18,9 @@ int height = 800;
 const int FPS = 60; 
 double deltaTime = 0;
 
+
 int main(){
+    std::cout << "Current Path: " << std::filesystem::current_path() << std::endl;
     /*
     {Program} contains all the GLFW/GLAD config settings.
     {Program} creates window, which must be passed to Interface class.
@@ -57,8 +37,8 @@ int main(){
     Container box(0.2, 0.2, 0.7, 0.4, window, interfaceProgram); 
     
     // Camera
-    // Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-    // glfwSetScrollCallback(window, Scroll_Callback);
+    Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+    glfwSetScrollCallback(window, Scroll_Callback);
 
     while(program.Running())
     {   
@@ -71,8 +51,6 @@ int main(){
         program.ClearBuffers();
 
         // // Drawing
-        // camera.Update(window, deltaTime, shaderList, "cameraView");
-        // model.Draw(shaderProgram);
         box.Draw();
 
         auto endTime = glfwGetTime();

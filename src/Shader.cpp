@@ -1,7 +1,9 @@
 #include "Shader.h"
-#include"Optional.h"
+#include "Utilities.h"
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath){
+    std::cout << "Shader Application" << std::endl;
+
     // Shader Setup
     unsigned int vertexShader, fragmentShader;
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -32,6 +34,10 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath){
     glDeleteShader(fragmentShader);
 }
 
+GLuint Shader::getID(){
+    return ID;
+}
+
 void Shader::Enable(){
     glUseProgram(ID);
 }
@@ -40,7 +46,7 @@ void Shader::Delete(){
     glDeleteShader(ID);
 }
 
-void Shader::compileErrors(unsigned int& shader, std::string type)
+void Shader::compileErrors(unsigned int& shader, string type)
 {
     GLint success;
     GLchar infoLog[1024];

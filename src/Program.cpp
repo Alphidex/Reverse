@@ -6,7 +6,13 @@ void processInput(GLFWwindow *window);
 
 Program::Program(int width, int height)
 {
-    glfwInit();
+    std::cout << "Initializing Program" << std::endl;
+    
+    if (!glfwInit()){
+        std::cout << "Failed to initialize GLFW" << std::endl;
+        ERROR = true;
+    }
+
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
