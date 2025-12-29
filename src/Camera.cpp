@@ -5,7 +5,7 @@ double fov = 45;
 
 Camera::Camera(glm::vec3 position) : position(position) {}
 
-void Camera::KeyboardMovement(GLFWwindow* window, double deltaTime)
+void Camera::KeyboardMovement(GLFWwindow* window, float deltaTime)
 {
     float calibratedMovementSpeed = deltaTime * movementSpeed;
 
@@ -29,7 +29,7 @@ void Camera::KeyboardMovement(GLFWwindow* window, double deltaTime)
         movementSpeed = baseMovementSpeed;
 }
 
-void Camera::MouseMovement(GLFWwindow* window)
+void Camera::MouseMovement(GLFWwindow* window, float deltaTime)
 {
     if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS){
         if (firstClick)
@@ -41,13 +41,14 @@ void Camera::MouseMovement(GLFWwindow* window)
         MousePosition currentMousePos;
         glfwGetCursorPos(window, &currentMousePos.x, &currentMousePos.y);
 
-        double offsetX = currentMousePos.x - lastMousePos.x;
-        double offsetY = -currentMousePos.y + lastMousePos.y;
+        double dif_x = currentMousePos.x - lastMousePos.x;
+        double dif_y = -(currentMousePos.y - lastMousePos.y);
+
+        double offsetX = dif_x * mouseSensitivity * deltaTime;
+        double offsetY = dif_y * mouseSensitivity * deltaTime;
+
         lastMousePos.x = currentMousePos.x;
         lastMousePos.y = currentMousePos.y;
-
-        offsetX *= mouseSensitivity;
-        offsetY *= mouseSensitivity;
 
         yaw += offsetX;
         pitch += offsetY;
@@ -68,10 +69,10 @@ void Camera::UpdateShader(Shader& shader, const char* uniform)
     glUniformMatrix4fv(glGetUniformLocation(shader.getID(), uniform), 1, GL_FALSE, glm::value_ptr(cameraView));
 }
 
-void Camera::Update(GLFWwindow* window, double deltaTime, std::vector<Shader>& shaderList, const char* uniform)
+void Camera::Update(GLFWwindow* window, float deltaTime, std::vector<Shader>& shaderList, const char* uniform)
 {
     KeyboardMovement(window, deltaTime);
-    MouseMovement(window);
+    MouseMovement(window, deltaTime);
 
     // Looking
     front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));

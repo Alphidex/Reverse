@@ -21,8 +21,10 @@ Container::Container(float x, float y, float width, float height, GLFWwindow* wi
     // Checks for x and y
     assert(0.0f <= x && x <= 1.0f);
     assert(0.0f <= y && y <= 1.0f);
-    assert(0.0f <= width && width <= 1.0f && x + width < 1.0f);
-    assert(0.0f <= height && height <= 1.0f && y + height < 1.0f);
+    assert(0.0f <= width && width <= 1.0f);
+    assert(0.0f <= height && height <= 1.0f);
+    assert(x + width <= 1.0f);
+    assert(y + height <= 1.0f);
 
     /* Process parameters to NDC */ 
     // Get window size

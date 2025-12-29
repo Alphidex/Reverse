@@ -5,9 +5,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 
 Program::Program(int width, int height)
-{
-    std::cout << "Initializing Program" << std::endl;
-    
+{   
     if (!glfwInit()){
         std::cout << "Failed to initialize GLFW" << std::endl;
         ERROR = true;

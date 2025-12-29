@@ -16,25 +16,40 @@ enum LightType
 
 class Light {
 public:
-    static Light Directional(const glm::vec3& direction);
-    static Light Point(const glm::vec3& position, float constant, float linear, float quadratic);
-    static Light Spotlight(const glm::vec3& position, const glm::vec3& direction, float cutoffInner, float cutoffOuter);
     void LightProperties(const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular);
-
     void ShaderData(Shader& shader);
-
-    glm::vec3 Position{};
-    glm::vec3 Direction{};
-
-private:
+    
+protected:
+    glm::vec3 dir;
+    glm::vec3 pos;
     LightType Type;
-    glm::vec3 Ambient{};
-    glm::vec3 Diffuse{};
-    glm::vec3 Specular{};
+    glm::vec3 ambient;
+    glm::vec3 diffuse;
+    glm::vec3 specular;
 
     float attConstant;
-    float attLinear{};
+    float attLinear;
     float attQuadratic;
-    float InnerCutOff{};
-    float OuterCutOff{};
+};
+
+class DirectionalLight : public Light {
+public:
+    DirectionalLight(const glm::vec3& direction, const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular);
+    void ShaderData(Shader& shader);
+};
+
+class PointLight : public Light {
+public: 
+    PointLight(const glm::vec3& direction, const glm::vec3& position, float constant, float linear, float quadratic);
+    void ShaderData(Shader& shader);
+};
+
+class SpotLight : public Light {
+public:
+    SpotLight(const glm::vec3& direction, const glm::vec3& position, float cutOffInner, float cutOffOuter);
+    void ShaderData(Shader& shader);
+
+private:
+    float innerCutOff;
+    float outerCutOff;
 };

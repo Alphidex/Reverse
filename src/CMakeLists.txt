@@ -1,5 +1,10 @@
 add_executable(Reverse)
 
+# Set output directory to project root
+set_target_properties(Reverse PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}"
+)
+
 target_sources(Reverse PRIVATE
     main.cpp
     glad.c

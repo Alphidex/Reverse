@@ -1,0 +1,14 @@
+{
+  "version": 10,
+  "configurePresets": [
+    {
+      "name": "default",
+      "displayName": "Default Preset",
+      "description": "The default configuration preset",
+      "binaryDir": "${sourceDir}/build",
+      "generator": "Ninja",
+      "cacheVariables": {
+      }
+    }
+  ]
+}

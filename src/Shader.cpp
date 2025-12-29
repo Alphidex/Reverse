@@ -2,8 +2,6 @@
 #include "Utilities.h"
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath){
-    std::cout << "Shader Application" << std::endl;
-
     // Shader Setup
     unsigned int vertexShader, fragmentShader;
     vertexShader = glCreateShader(GL_VERTEX_SHADER);
