@@ -1,6 +1,6 @@
 #include "Light.h"
 
-DirectionalLight::DirectionalLight(const glm::vec3& direction, const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular) {
+DirectionalLight::DirectionalLight(const glm::vec3 direction, const glm::vec3 ambient, const glm::vec3 diffuse, const glm::vec3 specular) {
     dir = direction;
     Light::LightProperties(ambient, diffuse, specular);
 }

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <filesystem>
+#include <glm/glm.hpp>
 
 // // ===== Project =====
 #include "Camera.h"
@@ -85,6 +86,10 @@ int main(){
     // Camera
     Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
     glfwSetScrollCallback(window, Scroll_Callback);
+
+    // Light
+    glm::vec3 lightDir(0.0f, -1.0f, 0.0f);
+    DirectionalLight dirLight(glm, 1.0f, 1.0f, 1.0f);
 
     while(program.Running())
     {   

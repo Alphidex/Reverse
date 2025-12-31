@@ -34,7 +34,7 @@ protected:
 
 class DirectionalLight : public Light {
 public:
-    DirectionalLight(const glm::vec3& direction, const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular);
+    DirectionalLight(const glm::vec3 direction, const glm::vec3 ambient, const glm::vec3 diffuse, const glm::vec3 specular);
     void ShaderData(Shader& shader);
 };
 
