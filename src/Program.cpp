@@ -1,4 +1,9 @@
-#include "Program.h"
+/**
+ * @file Program.cpp
+ * @brief Implementation of the Program class
+ */
+
+#include "header/Program.h"
 
 // Callback Functions
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -34,6 +39,8 @@ Program::Program(int width, int height)
         glfwSwapInterval(1); // use Vsync 
 
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_STENCIL_TEST);
+        glStencilMask(0x000F);
     }
 }
 
@@ -50,7 +57,7 @@ void Program::SwapBuffers()
 
 void Program::ClearBuffers()
 {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
 void Program::Terminate()
@@ -58,13 +65,11 @@ void Program::Terminate()
     glfwTerminate();
 }
 
-bool Program::Running()
-{
+bool Program::Running() const {
     return !glfwWindowShouldClose(window);
-};
+}
 
-GLFWwindow* Program::GetWindow()
-{
+GLFWwindow* Program::GetWindow() const {
     return window;
 }
 

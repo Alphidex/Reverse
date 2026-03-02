@@ -4,8 +4,8 @@
 #include<glm/glm.hpp>
 #include<glm/gtc/matrix_transform.hpp>
 #include<glm/gtc/type_ptr.hpp>
-#include "Drawable.h"
-#include "CoreTypes.h"
+#include "header/Drawable.h"
+#include "header/CoreTypes.h"
 
 Drawable::Drawable(Shader& shader, vector<Vertex>& vertices, vector<unsigned int>& indices, vector<Texture>& textures): 
 shader(shader),

@@ -1,7 +1,10 @@
-#include <iostream>
-#include "Camera.h"
+/**
+ * @file Camera.cpp
+ * @brief Implementation of the Camera system
+ */
 
-double fov = 45;
+#include <iostream>
+#include "header/Camera.h"
 
 Camera::Camera(glm::vec3 position) : position(position) {}
 
@@ -27,6 +30,14 @@ void Camera::KeyboardMovement(GLFWwindow* window, float deltaTime)
         movementSpeed = shiftMovementSpeed;
     if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
         movementSpeed = baseMovementSpeed;
+}
+
+void Camera::printPosition() const {
+    std::cout << "Camera Position: (" << position.x << ", " << position.y << ", " << position.z << ")\n";
+}
+
+void Camera::setFOV(float newFov) {
+    fov = glm::clamp(newFov, 1.0f, 45.0f);
 }
 
 void Camera::MouseMovement(GLFWwindow* window, float deltaTime)
@@ -85,7 +96,7 @@ void Camera::Update(GLFWwindow* window, float deltaTime, std::vector<Shader>& sh
 
     // Zooming
     glm::mat4 projection;
-    projection = glm::perspective(glm::radians((float) fov), 800.0f / 600.0f, 0.1f, 1000.0f);
+    projection = glm::perspective(glm::radians((float) fov), aspectRatio, nearPlane, farPlane);
 
     cameraView = projection * view;
 
@@ -93,8 +104,16 @@ void Camera::Update(GLFWwindow* window, float deltaTime, std::vector<Shader>& sh
         UpdateShader(shader, uniform);
 }
 
-void Scroll_Callback(GLFWwindow* window, double xoffset, double yoffset){
-    fov -= yoffset * 2;
-    if (fov < 1.0f) fov = 1.0f;
-    if (fov > 45.0f) fov = 45.0f;
+void Camera::setPerspective(float aspectRatio, float nearPlane, float farPlane){
+    this->aspectRatio = aspectRatio;
+    this->nearPlane = nearPlane;
+    this->farPlane = farPlane;
+}  
+
+void Scroll_Callback(GLFWwindow* window, double xoffset, double yoffset) {
+    Camera* camera = static_cast<Camera*>(glfwGetWindowUserPointer(window));
+    if (camera) {
+        float currentFov = camera->getFOV();
+        camera->setFOV(currentFov - static_cast<float>(yoffset * 2));
+    }
 }

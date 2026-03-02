@@ -63,7 +63,6 @@ void main()
     vec3 viewDir = normalize(cameraPos - FragPos); 
     vec4 result = texture(material.diffuse, texCoord);
 
-    //FragColor = vec4(1.0, 1.0, 0.0, 0.7);
     FragColor = result;
 } 
 

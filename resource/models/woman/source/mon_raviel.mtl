@@ -1,0 +1,92 @@
+# Blender 3.6.8 MTL File: 'Raviel.blend'
+# www.blender.org
+
+newmtl Object_1_p_1
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/Whyink/Desktop/GE/Character/Raviel/Raviel_face.bmp
+
+newmtl Object_1_p_2
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/Whyink/Desktop/GE/Character/Raviel/Raviel_face.bmp
+
+newmtl Object_2_p_1
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/Whyink/Desktop/GE/Character/Raviel/Raviel_body01.bmp
+
+newmtl Object_2_p_2
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/Whyink/Desktop/GE/Character/Raviel/Raviel_body02.bmp
+
+newmtl Object_3_p_1
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+illum 1
+map_Kd C:/Users/Whyink/Desktop/GE/Character/Raviel/Raviel_hair.bmp
+map_d C:/Users/Whyink/Desktop/GE/Character/Raviel/Raviel_hair.bmp
+
+newmtl Object_3_p_2
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+illum 1
+map_Kd C:/Users/Whyink/Desktop/GE/Character/Raviel/Raviel_hair.bmp
+map_d C:/Users/Whyink/Desktop/GE/Character/Raviel/Raviel_hair.bmp
+
+newmtl Object_4
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/Whyink/Desktop/GE/Character/Raviel/tooth_02.bmp
+
+newmtl Object_5_p_1
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/Whyink/Desktop/GE/Character/Raviel/Raviel_body01.bmp
+
+newmtl Object_5_p_2
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 1
+map_Kd C:/Users/Whyink/Desktop/GE/Character/Raviel/Raviel_body02.bmp

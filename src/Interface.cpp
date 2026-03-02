@@ -1,5 +1,5 @@
 #include<iostream>
-#include "Interface.h"
+#include "header/Interface.h"
 
 Interface::Interface(GLFWwindow* window, Shader& shader) : window(window), shader(shader) 
 {

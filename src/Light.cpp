@@ -1,4 +1,9 @@
-#include "Light.h"
+/**
+ * @file Light.cpp
+ * @brief Implementation of the lighting system
+ */
+
+#include "header/Light.h"
 
 DirectionalLight::DirectionalLight(const glm::vec3 direction, const glm::vec3 ambient, const glm::vec3 diffuse, const glm::vec3 specular) {
     dir = direction;

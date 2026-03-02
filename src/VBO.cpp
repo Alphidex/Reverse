@@ -1,4 +1,4 @@
-#include "VBO.h"
+#include "header/VBO.h"
 
 VBO::VBO(void* vertices, GLsizeiptr size){
     glGenBuffers(1, &ID);

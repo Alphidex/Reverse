@@ -1,3 +1,9 @@
+/**
+ * @file main.cpp
+ * @brief Main entry point for the Reverse Engine
+ * @details Initializes OpenGL context, window management, camera system, and main render loop
+ */
+
 // // ===== System =====
 #include <iostream>
 #include <vector>
@@ -5,11 +11,11 @@
 #include <glm/glm.hpp>
 
 // // ===== Project =====
-#include "Camera.h"
-#include "Light.h"
-#include "Model.h"
-#include "Program.h"
-#include "Interface.h"
+#include "header/Camera.h"
+#include "header/Light.h"
+#include "header/Model.h"
+#include "header/Program.h"
+#include "header/Interface.h"
 
 using std::vector;
 
@@ -18,104 +24,149 @@ using std::vector;
 int width = 800;
 int height = 800;
 
-const float FPS = 60.0f; 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 
 
-vector<Vertex> cube = {
-    // Front face
+// Cube mesh data
+vector<Vertex> cubeVertices = {
+    // Front face (Z+)
     {{-0.5f, -0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}},
     {{ 0.5f, -0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f}},
     {{ 0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
     {{-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
-    // Back face
-    {{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {1.0f, 0.0f}},
+    
+    // Back face (Z-)
     {{ 0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {0.0f, 0.0f}},
-    {{ 0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f}},
+    {{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {1.0f, 0.0f}},
     {{-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {1.0f, 1.0f}},
+    {{ 0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f}},
+    
+    // Left face (X-)
+    {{-0.5f, -0.5f, -0.5f}, {-1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+    {{-0.5f, -0.5f,  0.5f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
+    {{-0.5f,  0.5f,  0.5f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 1.0f}},
+    {{-0.5f,  0.5f, -0.5f}, {-1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}},
+    
+    // Right face (X+)
+    {{ 0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+    {{ 0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
+    {{ 0.5f,  0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f}},
+    {{ 0.5f,  0.5f,  0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}},
+    
+    // Top face (Y+)
+    {{-0.5f,  0.5f,  0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
+    {{ 0.5f,  0.5f,  0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+    {{ 0.5f,  0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}},
+    {{-0.5f,  0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
+    
+    // Bottom face (Y-)
+    {{-0.5f, -0.5f, -0.5f}, {0.0f, -1.0f, 0.0f}, {0.0f, 0.0f}},
+    {{ 0.5f, -0.5f, -0.5f}, {0.0f, -1.0f, 0.0f}, {1.0f, 0.0f}},
+    {{ 0.5f, -0.5f,  0.5f}, {0.0f, -1.0f, 0.0f}, {1.0f, 1.0f}},
+    {{-0.5f, -0.5f,  0.5f}, {0.0f, -1.0f, 0.0f}, {0.0f, 1.0f}}
 };
 
 vector<unsigned int> cubeIndices = {
     // Front face
-    0, 1, 2,
-    2, 3, 0,
+    0, 1, 2,  2, 3, 0,
     // Back face
-    4, 5, 6,
-    6, 7, 4,
+    4, 5, 6,  6, 7, 4,
     // Left face
-    4, 0, 3,
-    3, 7, 4,
+    8, 9, 10,  10, 11, 8,
     // Right face
-    1, 5, 6,
-    6, 2, 1,
+    12, 13, 14,  14, 15, 12,
     // Top face
-    3, 2, 6,
-    6, 7, 3,
+    16, 17, 18,  18, 19, 16,
     // Bottom face
-    4, 5, 1,
-    1, 0, 4
+    20, 21, 22,  22, 23, 20
 };
 
-vector<Texture> cubeTextures = {};
+// Plane mesh data
+vector<Vertex> planeVertices = {
+    {{-5.0f, -0.5f, -5.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 2.0f}},
+    {{ 5.0f, -0.5f, -5.0f}, {0.0f, 1.0f, 0.0f}, {2.0f, 2.0f}},
+    {{ 5.0f, -0.5f,  5.0f}, {0.0f, 1.0f, 0.0f}, {2.0f, 0.0f}},
+    {{-5.0f, -0.5f,  5.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}}
+};
+
+vector<unsigned int> planeIndices = {
+    0, 1, 2,
+    2, 3, 0
+};
 
 
+/// Entry point for the application
+/// Initializes OpenGL context, camera, shaders, and main render loop
 int main(){
-    std::cout << "Current Path: " << std::filesystem::current_path() << std::endl;
-    /*
-    {Program} contains all the GLFW/GLAD config settings.
-    {Program} creates window, which must be passed to Interface class.
-    */ 
-    Program program(width, height);
-    GLFWwindow* window = program.GetWindow();
-    
-    // Shader Setup
-    Shader shaderProgram("shader/default.vert", "shader/default.frag");
-    Shader interfaceProgram("shader/interface.vert", "shader/interface.frag");
-    vector<Shader> shaderList = {shaderProgram};
-    
-    /* Interface Setup. Responsible for anythin UI related */
-    Interface ui(window, interfaceProgram);
-    // Container box(0.0, 0.0, 0.2, 0.7, window, interfaceProgram);
-    // Container box2(0.0, 0.7, 1.0, 0.3, window, interfaceProgram); 
-    Model model("resource/models/backpack/backpack.obj");
-    Model sorceress("resource/models/sorceress/source/Sorcerrer_03.fbx");
-    Model porshe("resource/models/porshe/source/PORSHE.blend");
-    
-    // Camera
-    Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-    glfwSetScrollCallback(window, Scroll_Callback);
+    try {
+        std::cout << "Current Path: " << std::filesystem::current_path() << std::endl;
+        
+        // Program contains all the GLFW/GLAD config settings and creates window
+        Program program(width, height);
+        GLFWwindow* window = program.GetWindow();
+        
+        // Shader Setup
+        Shader shaderProgram("shader/default.vert", "shader/default.frag");
+        Shader interfaceProgram("shader/interface.vert", "shader/interface.frag");
+        vector<Shader> shaderList = {shaderProgram};
+        
+        /* Interface Setup. Responsible for anything UI related */
+        Interface ui(window, interfaceProgram);
+        
+        // Create textures (must be after OpenGL context is created)
+        vector<Texture> cubeTextures = {Texture("./resource/textures/marble.jpg", "diffuse")};
+        vector<Texture> planeTextures = {Texture("./resource/textures/wall.jpg", "diffuse")};
+        
+        Mesh cube(cubeVertices, cubeIndices, cubeTextures);
+        Mesh cube2(cubeVertices, cubeIndices, cubeTextures);
+        cube2.setPosition(glm::vec3(2.0f, 0.0f, 0.0f));
+        Mesh plane(planeVertices, planeIndices, planeTextures);
 
-    // Light
-    glm::vec3 lightDir(0.0f, -1.0f, 0.0f);
-    DirectionalLight dirLight(glm, 1.0f, 1.0f, 1.0f);
+        
+        // Camera
+        Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
+        glfwSetWindowUserPointer(window, &camera);  // Set camera as user pointer for callbacks
+        glfwSetScrollCallback(window, Scroll_Callback);
 
-    while(program.Running())
-    {   
-        float currentFrame = glfwGetTime();
-        deltaTime = currentFrame - lastFrame; // Frame difference in seconds
-        lastFrame = currentFrame;
+        // Light configuration
+        glm::vec3 lightDir(0.0f, -1.0f, 0.0f);
 
-        program.ProcessEvents();
+        while(program.Running())
+        {           
+            float currentFrame = glfwGetTime();
+            deltaTime = currentFrame - lastFrame; // Frame difference in seconds
+            lastFrame = currentFrame;
 
-        // Clears the back-buffer with said color
-        ui.ClearBackgroundColor(0.2f, 0.3f, 0.3f, 1.0f);
-        program.ClearBuffers();
+            program.ProcessEvents();
 
-        // Drawing
-        // box.Draw();
-        // box2.Draw();
-        // model.Draw(shaderProgram);
-        // sorceress.Draw(shaderProgram);
-        // porshe.Draw(shaderProgram);
-        camera.Update(window, deltaTime, shaderList, "cameraView");
+            // Clears the back-buffer with said color
+            ui.ClearBackgroundColor(0.2f, 0.3f, 0.3f, 1.0f);
+            program.ClearBuffers();
 
-        auto endTime = glfwGetTime();
-        program.SwapBuffers();
+            // Render scene geometry
+            cube.Draw(shaderProgram, "model");
+            cube2.Draw(shaderProgram, "model");
+            plane.Draw(shaderProgram, "model");
+
+            // Update camera view-projection matrix
+            glfwGetFramebufferSize(window, &width, &height);
+            float aspectRatio = static_cast<float>(width) / static_cast<float>(height);
+            float nearPlane = 0.1f;
+            float farPlane = 6000.0f;
+            camera.setPerspective(aspectRatio, nearPlane, farPlane);
+            camera.Update(window, deltaTime, shaderList, "cameraView");
+
+            program.SwapBuffers();
+        }
+
+        // Cleaning Up
+        program.Terminate();
+        return 0;
     }
-
-    // Cleaning Up
-    program.Terminate();
-    return 0;
+    catch (const std::exception& e) {
+        std::cerr << "Fatal error: " << e.what() << std::endl;
+        return 1;
+    }
 }
