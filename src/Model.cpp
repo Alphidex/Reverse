@@ -4,6 +4,7 @@
  */
 
 #include "header/Model.h"
+#include "header/ResourceManager.h"
 #include "header/Logger.h"
 #include <stdexcept>
 
@@ -46,7 +47,7 @@ void Model::processNode(aiNode* node, const aiScene* scene) {
 Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
     vector<Vertex> vertices;
     vector<unsigned int> indices;
-    vector<Texture> textures;
+    vector<shared_ptr<Texture>> textures;
 
     // Process vertices
     for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
@@ -85,33 +86,27 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene) {
     if (mesh->mMaterialIndex >= 0) {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
         
-        vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "diffuse");
+        vector<shared_ptr<Texture>> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "diffuse");
         textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
         
-        vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "specular");
+        vector<shared_ptr<Texture>> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "specular");
         textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
     }
 
     return Mesh(vertices, indices, textures);
 };
 
-vector<Texture> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, const string& typeName) {
-    vector<Texture> textures;
+vector<shared_ptr<Texture>> Model::loadMaterialTextures(aiMaterial* mat, aiTextureType type, const string& typeName) {
+    vector<shared_ptr<Texture>> textures;
     
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
         aiString str;
         mat->GetTexture(type, i, &str);
         std::string path = directory + std::string(str.C_Str());
         
-        // Check if texture was already loaded
-        if (loadedTextures.count(path) > 0) {
-            textures.push_back(loadedTextures[path]);
-        }
-        else {
-            Texture texture(path.c_str(), typeName.c_str());
-            textures.push_back(texture);
-            loadedTextures[path] = texture;
-        }
+        // Use ResourceManager to load/cache textures
+        shared_ptr<Texture> texture = ResourceManager::getInstance().loadTexture(path, typeName);
+        textures.push_back(texture);
     }
     
     return textures;

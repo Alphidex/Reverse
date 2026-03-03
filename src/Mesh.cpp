@@ -5,7 +5,7 @@
 
 #include "header/Mesh.h"
 
-Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture>& textures): 
+Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<shared_ptr<Texture>>& textures): 
 vertices(vertices), indices(indices), textures(textures),
 vao(),
 vbo(vertices.data(), vertices.size() * sizeof(Vertex)),
@@ -39,7 +39,7 @@ void Mesh::Draw(Shader& shader, const char* uniform) const {
     unsigned int specularNr = 1;
     for (unsigned int i = 0; i < textures.size(); i++) {
         std::string number;
-        std::string texType = textures[i].getType();
+        std::string texType = textures[i]->getType();
         
         if (texType == "diffuse")
             number = std::to_string(diffuseNr++);
@@ -47,7 +47,7 @@ void Mesh::Draw(Shader& shader, const char* uniform) const {
             number = std::to_string(specularNr++);
 
         const char* name = "diffuse[0]";  // TODO: Make this dynamic
-        textures[i].Bind(shader, name, i);
+        textures[i]->Bind(shader, name, i);
     }
 
     // Render mesh

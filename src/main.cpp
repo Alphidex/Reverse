@@ -7,6 +7,7 @@
 // // ===== System =====
 #include <iostream>
 #include <vector>
+#include <memory>
 #include <filesystem>
 #include <glm/glm.hpp>
 
@@ -18,6 +19,7 @@
 #include "header/Interface.h"
 #include "header/Config.h"
 #include "header/Logger.h"
+#include "header/ResourceManager.h"
 
 using std::vector;
 
@@ -113,17 +115,20 @@ int main(){
         Program program(Config::Window::DEFAULT_WIDTH, Config::Window::DEFAULT_HEIGHT);
         GLFWwindow* window = program.GetWindow();
         
-        // Shader Setup
-        Shader shaderProgram(Config::Shaders::DEFAULT_VERTEX, Config::Shaders::DEFAULT_FRAGMENT);
-        Shader interfaceProgram(Config::Shaders::INTERFACE_VERTEX, Config::Shaders::INTERFACE_FRAGMENT);
-        vector<Shader> shaderList = {shaderProgram};
+        // Get ResourceManager instance
+        ResourceManager& resourceManager = ResourceManager::getInstance();
+        
+        // Load shaders using ResourceManager
+        auto shaderProgram = resourceManager.loadShader(Config::Shaders::DEFAULT_VERTEX, Config::Shaders::DEFAULT_FRAGMENT);
+        auto interfaceProgram = resourceManager.loadShader(Config::Shaders::INTERFACE_VERTEX, Config::Shaders::INTERFACE_FRAGMENT);
+        vector<std::shared_ptr<Shader>> shaderList = {shaderProgram};
         
         /* Interface Setup. Responsible for anything UI related */
-        Interface ui(window, interfaceProgram);
+        Interface ui(window, *interfaceProgram);
         
-        // Create textures (must be after OpenGL context is created)
-        vector<Texture> cubeTextures = {Texture("./resource/textures/marble.jpg", "diffuse")};
-        vector<Texture> planeTextures = {Texture("./resource/textures/wall.jpg", "diffuse")};
+        // Load textures using ResourceManager (must be after OpenGL context is created)
+        vector<std::shared_ptr<Texture>> cubeTextures = {resourceManager.loadTexture("./resource/textures/marble.jpg", "diffuse")};
+        vector<std::shared_ptr<Texture>> planeTextures = {resourceManager.loadTexture("./resource/textures/wall.jpg", "diffuse")};
         
         Mesh cube(cubeVertices, cubeIndices, cubeTextures);
         Mesh cube2(cubeVertices, cubeIndices, cubeTextures);
@@ -157,9 +162,9 @@ int main(){
             program.ClearBuffers();
 
             // Render scene geometry
-            cube.Draw(shaderProgram, "model");
-            cube2.Draw(shaderProgram, "model");
-            plane.Draw(shaderProgram, "model");
+            cube.Draw(*shaderProgram, "model");
+            cube2.Draw(*shaderProgram, "model");
+            plane.Draw(*shaderProgram, "model");
 
             // Update camera view-projection matrix
             glfwGetFramebufferSize(window, &width, &height);
@@ -169,6 +174,13 @@ int main(){
 
             program.SwapBuffers();
         }
+
+        // Log resource statistics before cleanup
+        size_t textures, shaders, models;
+        resourceManager.getResourceStats(textures, shaders, models);
+        LOG_INFO("Resource statistics - Textures: " + std::to_string(textures) + 
+                 ", Shaders: " + std::to_string(shaders) + 
+                 ", Models: " + std::to_string(models));
 
         // Cleaning Up
         LOG_INFO("Shutting down engine...");

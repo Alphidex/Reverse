@@ -25,6 +25,7 @@ target_sources(Reverse PRIVATE
     Program.cpp
     Interface.cpp
     Logger.cpp
+    ResourceManager.cpp
 )
 
 target_include_directories(Reverse 

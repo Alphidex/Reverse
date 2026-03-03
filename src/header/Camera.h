@@ -13,6 +13,7 @@
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
 #include<vector>
+#include<memory>
 #include "Shader.h"
 #include "Config.h"
 
@@ -39,10 +40,10 @@ public:
      * @brief Updates camera state and applies to shaders
      * @param window GLFW window for input handling
      * @param deltaTime Time elapsed since last frame (seconds)
-     * @param shaderList List of shaders to update with camera matrix
+     * @param shaderList List of shared pointers to shaders to update with camera matrix
      * @param uniform Name of the uniform variable in shaders
      */
-    void Update(GLFWwindow* window, float deltaTime, std::vector<Shader>& shaderList, const char* uniform);
+    void Update(GLFWwindow* window, float deltaTime, std::vector<std::shared_ptr<Shader>>& shaderList, const char* uniform);
     
     /**
      * @brief Sets the perspective projection parameters

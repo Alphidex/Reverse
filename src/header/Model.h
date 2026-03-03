@@ -7,6 +7,7 @@
 #pragma once
 
 #include<map>
+#include<memory>
 #include<string>
 #include<vector>
 // External Packages
@@ -18,7 +19,7 @@
 
 // Project Packages
 #include "Mesh.h"
-using std::string, std::vector, std::map;
+using std::string, std::vector, std::map, std::shared_ptr;
 
 /**
  * @brief Loads and renders 3D models from various file formats
@@ -44,7 +45,6 @@ public:
 private:
     vector<Mesh> meshes;           ///< All meshes in this model
     string directory;              ///< Directory containing the model file
-    map<string, Texture> loadedTextures; ///< Cache of loaded textures
     
     /**
      * @brief Processes a scene node recursively
@@ -66,7 +66,7 @@ private:
      * @param mat Assimp material containing textures
      * @param type Texture type to load (diffuse, specular, etc.)
      * @param typeName Internal name for the texture type
-     * @return Vector of loaded textures
+     * @return Vector of loaded texture shared pointers
      */
-    vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, const string& typeName);
+    vector<shared_ptr<Texture>> loadMaterialTextures(aiMaterial* mat, aiTextureType type, const string& typeName);
 };
