@@ -34,32 +34,33 @@ void Light::LightProperties(const glm::vec3& ambient, const glm::vec3& diffuse, 
 
 void DirectionalLight::ShaderData(Shader& shader) {
     shader.Enable();
-        
-    glUniform3fv(glGetUniformLocation(shader.getID(), "dirLight.direction"), 1,  glm::value_ptr(dir));
-    glUniform3fv(glGetUniformLocation(shader.getID(), "dirLight.ambient"), 1, glm::value_ptr(ambient));
-    glUniform3fv(glGetUniformLocation(shader.getID(), "dirLight.diffuse"), 1,  glm::value_ptr(diffuse));
-    glUniform3fv(glGetUniformLocation(shader.getID(), "dirLight.specular"), 1,  glm::value_ptr(specular));
+    
+    shader.setVec3("dirLight.direction", dir);
+    shader.setVec3("dirLight.ambient", ambient);
+    shader.setVec3("dirLight.diffuse", diffuse);
+    shader.setVec3("dirLight.specular", specular);
 }
 
 void PointLight::ShaderData(Shader& shader) {
     shader.Enable();
-    glUniform3fv(glGetUniformLocation(shader.getID(), "pointLight.position"), 1,  glm::value_ptr(pos));
-    glUniform1fv(glGetUniformLocation(shader.getID(), "pointLight.constant"), 1,  &attConstant);
-    glUniform1fv(glGetUniformLocation(shader.getID(), "pointLight.linear"), 1,  &attLinear);
-    glUniform1fv(glGetUniformLocation(shader.getID(), "pointLight.quadratic"), 1, &attQuadratic);
-    glUniform3fv(glGetUniformLocation(shader.getID(), "pointLight.ambient"), 1, glm::value_ptr(ambient));
-    glUniform3fv(glGetUniformLocation(shader.getID(), "pointLight.diffuse"), 1,  glm::value_ptr(diffuse));
-    glUniform3fv(glGetUniformLocation(shader.getID(), "pointLight.specular"), 1,  glm::value_ptr(specular));    
+    
+    shader.setVec3("pointLight.position", pos);
+    shader.setFloat("pointLight.constant", attConstant);
+    shader.setFloat("pointLight.linear", attLinear);
+    shader.setFloat("pointLight.quadratic", attQuadratic);
+    shader.setVec3("pointLight.ambient", ambient);
+    shader.setVec3("pointLight.diffuse", diffuse);
+    shader.setVec3("pointLight.specular", specular);
 }
 
 void SpotLight::ShaderData(Shader& shader) {
     shader.Enable();
-    glUniform3fv(glGetUniformLocation(shader.getID(), "spotLight.direction"), 1,  glm::value_ptr(dir));
-    glUniform3fv(glGetUniformLocation(shader.getID(), "spotLight.position"), 1,  glm::value_ptr(pos));
-    glUniform3fv(glGetUniformLocation(shader.getID(), "spotLight.ambient"), 1, glm::value_ptr(ambient));
-    glUniform3fv(glGetUniformLocation(shader.getID(), "spotLight.diffuse"), 1,  glm::value_ptr(diffuse));
-    glUniform3fv(glGetUniformLocation(shader.getID(), "spotLight.specular"), 1,  glm::value_ptr(specular));
-    glUniform1fv(glGetUniformLocation(shader.getID(), "spotLight.innerCutOff"), 1, &innerCutOff);
-    glUniform1fv(glGetUniformLocation(shader.getID(), "spotLight.outerCutOff"), 1, &outerCutOff);
     
+    shader.setVec3("spotLight.direction", dir);
+    shader.setVec3("spotLight.position", pos);
+    shader.setVec3("spotLight.ambient", ambient);
+    shader.setVec3("spotLight.diffuse", diffuse);
+    shader.setVec3("spotLight.specular", specular);
+    shader.setFloat("spotLight.innerCutOff", innerCutOff);
+    shader.setFloat("spotLight.outerCutOff", outerCutOff);
 }

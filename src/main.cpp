@@ -20,6 +20,7 @@
 #include "header/Config.h"
 #include "header/Logger.h"
 #include "header/ResourceManager.h"
+#include "header/Material.h"
 
 using std::vector;
 
@@ -127,13 +128,27 @@ int main(){
         Interface ui(window, *interfaceProgram);
         
         // Load textures using ResourceManager (must be after OpenGL context is created)
-        vector<std::shared_ptr<Texture>> cubeTextures = {resourceManager.loadTexture("./resource/textures/marble.jpg", "diffuse")};
-        vector<std::shared_ptr<Texture>> planeTextures = {resourceManager.loadTexture("./resource/textures/wall.jpg", "diffuse")};
+        auto marbleTexture = resourceManager.loadTexture("./resource/textures/marble.jpg", "diffuse");
+        auto wallTexture = resourceManager.loadTexture("./resource/textures/wall.jpg", "diffuse");
         
-        Mesh cube(cubeVertices, cubeIndices, cubeTextures);
-        Mesh cube2(cubeVertices, cubeIndices, cubeTextures);
+        // Create Materials with different properties
+        auto marbleMaterial = std::make_shared<Material>(shaderProgram);
+        marbleMaterial->addTexture(marbleTexture);
+        marbleMaterial->setDiffuseColor(glm::vec3(1.0f, 1.0f, 1.0f));
+        marbleMaterial->setSpecularColor(glm::vec3(0.8f, 0.8f, 0.8f));
+        marbleMaterial->setShininess(64.0f);
+        
+        auto wallMaterial = std::make_shared<Material>(shaderProgram);
+        wallMaterial->addTexture(wallTexture);
+        wallMaterial->setDiffuseColor(glm::vec3(0.9f, 0.9f, 0.9f));
+        wallMaterial->setSpecularColor(glm::vec3(0.3f, 0.3f, 0.3f));
+        wallMaterial->setShininess(32.0f);
+        
+        // Create meshes with materials
+        Mesh cube(cubeVertices, cubeIndices, marbleMaterial);
+        Mesh cube2(cubeVertices, cubeIndices, marbleMaterial);
         cube2.setPosition(glm::vec3(2.0f, 0.0f, 0.0f));
-        Mesh plane(planeVertices, planeIndices, planeTextures);
+        Mesh plane(planeVertices, planeIndices, wallMaterial);
 
         
         // Camera
@@ -161,10 +176,10 @@ int main(){
             );
             program.ClearBuffers();
 
-            // Render scene geometry
-            cube.Draw(*shaderProgram, "model");
-            cube2.Draw(*shaderProgram, "model");
-            plane.Draw(*shaderProgram, "model");
+            // Render scene geometry using materials
+            cube.Draw();
+            cube2.Draw();
+            plane.Draw();
 
             // Update camera view-projection matrix
             glfwGetFramebufferSize(window, &width, &height);

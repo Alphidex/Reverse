@@ -85,7 +85,7 @@ void Camera::MouseMovement(GLFWwindow* window, float deltaTime)
 void Camera::UpdateShader(Shader& shader, const char* uniform)
 {
     shader.Enable();
-    glUniformMatrix4fv(glGetUniformLocation(shader.getID(), uniform), 1, GL_FALSE, glm::value_ptr(cameraView));
+    shader.setMat4(uniform, cameraView);
 }
 
 void Camera::Update(GLFWwindow* window, float deltaTime, std::vector<std::shared_ptr<Shader>>& shaderList, const char* uniform)
