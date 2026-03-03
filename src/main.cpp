@@ -21,6 +21,9 @@
 #include "header/Logger.h"
 #include "header/ResourceManager.h"
 #include "header/Material.h"
+#include "header/Scene.h"
+#include "header/Entity.h"
+#include "header/MeshRenderer.h"
 
 using std::vector;
 
@@ -150,6 +153,28 @@ int main(){
         cube2.setPosition(glm::vec3(2.0f, 0.0f, 0.0f));
         Mesh plane(planeVertices, planeIndices, wallMaterial);
 
+        // ===== NEW: Entity/Component System Demo =====
+        // Create a scene to manage entities
+        Scene mainScene("MainScene");
+        
+        // Example: Create entities with MeshRenderer components
+        // (Keeping old meshes for now, but showing new system usage)
+        
+        // Entity 1: A cube using the entity system
+        auto cubeEntity = mainScene.createEntity("CubeEntity");
+        cubeEntity->getTransform().setPosition(glm::vec3(-2.0f, 1.0f, -2.0f));
+        cubeEntity->getTransform().setScale(glm::vec3(0.8f));
+        auto cubeMesh = std::make_shared<Mesh>(cubeVertices, cubeIndices, marbleMaterial);
+        auto cubeRenderer = cubeEntity->addComponent<MeshRenderer>(cubeMesh, marbleMaterial);
+        
+        // Entity 2: Another cube with different transform
+        auto cube2Entity = mainScene.createEntity("Cube2Entity");
+        cube2Entity->getTransform().setPosition(glm::vec3(2.0f, 1.0f, -2.0f));
+        cube2Entity->getTransform().setRotation(glm::vec3(0.0f, 45.0f, 0.0f));
+        auto cube2Mesh = std::make_shared<Mesh>(cubeVertices, cubeIndices, marbleMaterial);
+        auto cube2Renderer = cube2Entity->addComponent<MeshRenderer>(cube2Mesh, marbleMaterial);
+        
+        LOG_INFO("Scene initialized with " + std::to_string(mainScene.getEntityCount()) + " entities");
         
         // Camera
         Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
@@ -176,10 +201,23 @@ int main(){
             );
             program.ClearBuffers();
 
-            // Render scene geometry using materials
+            // Update scene (all entities and their components)
+            mainScene.update(deltaTime);
+
+            // Render old meshes (legacy system)
             cube.Draw();
             cube2.Draw();
             plane.Draw();
+            
+            // Render entities using new system
+            for (const auto& entity : mainScene.getEntities()) {
+                if (entity->isActive()) {
+                    auto renderer = entity->getComponent<MeshRenderer>();
+                    if (renderer && renderer->isEnabled()) {
+                        renderer->render();
+                    }
+                }
+            }
 
             // Update camera view-projection matrix
             glfwGetFramebufferSize(window, &width, &height);

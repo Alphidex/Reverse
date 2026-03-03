@@ -27,6 +27,10 @@ target_sources(Reverse PRIVATE
     Logger.cpp
     ResourceManager.cpp
     Material.cpp
+    Transform.cpp
+    Entity.cpp
+    Scene.cpp
+    MeshRenderer.cpp
 )
 
 target_include_directories(Reverse 
