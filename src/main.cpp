@@ -16,13 +16,14 @@
 #include "header/Model.h"
 #include "header/Program.h"
 #include "header/Interface.h"
+#include "header/Config.h"
+#include "header/Logger.h"
 
 using std::vector;
 
-
-// Parameters
-int width = 800;
-int height = 800;
+// Window parameters
+int width = Config::Window::DEFAULT_WIDTH;
+int height = Config::Window::DEFAULT_HEIGHT;
 
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
@@ -101,15 +102,20 @@ vector<unsigned int> planeIndices = {
 /// Initializes OpenGL context, camera, shaders, and main render loop
 int main(){
     try {
-        std::cout << "Current Path: " << std::filesystem::current_path() << std::endl;
+        // Initialize logging system
+        Logger::getInstance().setLogLevel(static_cast<LogLevel>(Config::Logging::DEFAULT_LOG_LEVEL));
+        Logger::getInstance().enableFileLogging(Config::Logging::ENABLE_FILE_LOGGING, Config::Logging::LOG_FILE_PATH);
+        
+        LOG_INFO("======== Reverse Engine Starting ========");
+        LOG_INFO("Current working directory: " + std::filesystem::current_path().string());
         
         // Program contains all the GLFW/GLAD config settings and creates window
-        Program program(width, height);
+        Program program(Config::Window::DEFAULT_WIDTH, Config::Window::DEFAULT_HEIGHT);
         GLFWwindow* window = program.GetWindow();
         
         // Shader Setup
-        Shader shaderProgram("shader/default.vert", "shader/default.frag");
-        Shader interfaceProgram("shader/interface.vert", "shader/interface.frag");
+        Shader shaderProgram(Config::Shaders::DEFAULT_VERTEX, Config::Shaders::DEFAULT_FRAGMENT);
+        Shader interfaceProgram(Config::Shaders::INTERFACE_VERTEX, Config::Shaders::INTERFACE_FRAGMENT);
         vector<Shader> shaderList = {shaderProgram};
         
         /* Interface Setup. Responsible for anything UI related */
@@ -141,8 +147,13 @@ int main(){
 
             program.ProcessEvents();
 
-            // Clears the back-buffer with said color
-            ui.ClearBackgroundColor(0.2f, 0.3f, 0.3f, 1.0f);
+            // Clear buffers with configured background color
+            ui.ClearBackgroundColor(
+                Config::Rendering::CLEAR_COLOR_R,
+                Config::Rendering::CLEAR_COLOR_G,
+                Config::Rendering::CLEAR_COLOR_B,
+                Config::Rendering::CLEAR_COLOR_A
+            );
             program.ClearBuffers();
 
             // Render scene geometry
@@ -153,20 +164,20 @@ int main(){
             // Update camera view-projection matrix
             glfwGetFramebufferSize(window, &width, &height);
             float aspectRatio = static_cast<float>(width) / static_cast<float>(height);
-            float nearPlane = 0.1f;
-            float farPlane = 6000.0f;
-            camera.setPerspective(aspectRatio, nearPlane, farPlane);
+            camera.setPerspective(aspectRatio, Config::Rendering::NEAR_PLANE, Config::Rendering::FAR_PLANE);
             camera.Update(window, deltaTime, shaderList, "cameraView");
 
             program.SwapBuffers();
         }
 
         // Cleaning Up
+        LOG_INFO("Shutting down engine...");
         program.Terminate();
+        LOG_INFO("======== Reverse Engine Stopped ========");
         return 0;
     }
     catch (const std::exception& e) {
-        std::cerr << "Fatal error: " << e.what() << std::endl;
+        LOG_ERROR("Fatal error: " + std::string(e.what()));
         return 1;
     }
 }

@@ -14,6 +14,7 @@
 #include<GLFW/glfw3.h>
 #include<vector>
 #include "Shader.h"
+#include "Config.h"
 
 /// @brief Stores mouse cursor position
 struct MousePosition 
@@ -75,25 +76,25 @@ private:
     glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f); ///< Up direction
     
     // Rotation angles
-    float yaw = -90.0f;           ///< Horizontal rotation (degrees)
-    float pitch = 0.0f;           ///< Vertical rotation (degrees)
+    float yaw = Config::Camera::DEFAULT_YAW;     ///< Horizontal rotation (degrees)
+    float pitch = Config::Camera::DEFAULT_PITCH; ///< Vertical rotation (degrees)
     
     // Mouse handling
     bool firstClick = true;       ///< First right-click detection flag
     MousePosition lastMousePos;   ///< Last recorded mouse position
 
     // Movement configuration
-    float baseMovementSpeed = 30.0f;      ///< Normal movement speed
-    float shiftMovementSpeed = 400.0f;    ///< Sprint movement speed
+    float baseMovementSpeed = Config::Camera::BASE_MOVEMENT_SPEED;      ///< Normal movement speed
+    float shiftMovementSpeed = Config::Camera::SPRINT_MOVEMENT_SPEED;   ///< Sprint movement speed
     float movementSpeed = baseMovementSpeed; ///< Current active speed
-    float mouseSensitivity = 5.0f;        ///< Mouse rotation sensitivity
+    float mouseSensitivity = Config::Camera::MOUSE_SENSITIVITY;         ///< Mouse rotation sensitivity
 
     // View and projection
     glm::mat4 cameraView = glm::mat4(1.0f); ///< Combined view-projection matrix
-    float aspectRatio = 4.0f / 3.0f;        ///< Screen aspect ratio
-    float farPlane = 1000.0f;               ///< Far clipping distance
-    float nearPlane = 0.1f;                 ///< Near clipping distance
-    float fov = 45.0f;                      ///< Field of view (degrees)
+    float aspectRatio = Config::Camera::DEFAULT_ASPECT_RATIO;        ///< Screen aspect ratio
+    float farPlane = Config::Camera::DEFAULT_FAR_PLANE;              ///< Far clipping distance
+    float nearPlane = Config::Camera::DEFAULT_NEAR_PLANE;            ///< Near clipping distance
+    float fov = Config::Camera::DEFAULT_FOV;                         ///< Field of view (degrees)
 
     /**
      * @brief Handles keyboard input for camera movement

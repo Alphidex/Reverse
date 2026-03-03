@@ -5,10 +5,11 @@
 
 #include "header/Shader.h"
 #include "header/Utilities.h"
+#include "header/Logger.h"
 #include <stdexcept>
 
-Shader::Shader(const char* vertexPath, const char* fragmentPath)  {
-    // Create shader objects
+Shader::Shader(const char* vertexPath, const char* fragmentPath)  {    LOG_DEBUG("Loading shaders: " + std::string(vertexPath) + ", " + std::string(fragmentPath));
+        // Create shader objects
     unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
     unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 

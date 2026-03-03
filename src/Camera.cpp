@@ -5,6 +5,8 @@
 
 #include <iostream>
 #include "header/Camera.h"
+#include "header/Config.h"
+#include "header/Logger.h"
 
 Camera::Camera(glm::vec3 position) : position(position) {}
 
@@ -33,11 +35,16 @@ void Camera::KeyboardMovement(GLFWwindow* window, float deltaTime)
 }
 
 void Camera::printPosition() const {
-    std::cout << "Camera Position: (" << position.x << ", " << position.y << ", " << position.z << ")\n";
+    if (Config::Debug::PRINT_CAMERA_POSITION) {
+        LOG_DEBUG("Camera Position: (" + 
+                  std::to_string(position.x) + ", " + 
+                  std::to_string(position.y) + ", " + 
+                  std::to_string(position.z) + ")");
+    }
 }
 
 void Camera::setFOV(float newFov) {
-    fov = glm::clamp(newFov, 1.0f, 45.0f);
+    fov = glm::clamp(newFov, Config::Camera::MIN_FOV, Config::Camera::MAX_FOV);
 }
 
 void Camera::MouseMovement(GLFWwindow* window, float deltaTime)
@@ -64,8 +71,9 @@ void Camera::MouseMovement(GLFWwindow* window, float deltaTime)
         yaw += offsetX;
         pitch += offsetY;
 
-        if (pitch > 89.0f)  pitch = 89.0f;
-        if (pitch < -89.0f) pitch = -89.0f;
+        // Clamp pitch to prevent gimbal lock
+        if (pitch > Config::Camera::MAX_PITCH)  pitch = Config::Camera::MAX_PITCH;
+        if (pitch < Config::Camera::MIN_PITCH) pitch = Config::Camera::MIN_PITCH;
     }
 
     if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_RELEASE){
@@ -114,6 +122,6 @@ void Scroll_Callback(GLFWwindow* window, double xoffset, double yoffset) {
     Camera* camera = static_cast<Camera*>(glfwGetWindowUserPointer(window));
     if (camera) {
         float currentFov = camera->getFOV();
-        camera->setFOV(currentFov - static_cast<float>(yoffset * 2));
+        camera->setFOV(currentFov - static_cast<float>(yoffset * Config::Camera::SCROLL_FOV_STEP));
     }
 }

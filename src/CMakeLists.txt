@@ -24,6 +24,7 @@ target_sources(Reverse PRIVATE
     Drawable.cpp
     Program.cpp
     Interface.cpp
+    Logger.cpp
 )
 
 target_include_directories(Reverse 

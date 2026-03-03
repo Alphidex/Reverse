@@ -4,11 +4,15 @@
  */
 
 #include "header/Texture.h"
+#include "header/Config.h"
+#include "header/Logger.h"
 #include <stdexcept>
 
 Texture::Texture() {}
 
 Texture::Texture(const char* filePath, const char* type) : path(filePath), type(type) {
+    LOG_DEBUG("Loading texture: " + std::string(filePath));
+    
     glGenTextures(1, &ID);
     glBindTexture(GL_TEXTURE_2D, ID);
 
@@ -18,8 +22,8 @@ Texture::Texture(const char* filePath, const char* type) : path(filePath), type(
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    // Load image
-    stbi_set_flip_vertically_on_load(true);
+    // Load image with configured vertical flip setting
+    stbi_set_flip_vertically_on_load(Config::Textures::FLIP_VERTICALLY_ON_LOAD);
     
     int width, height, nrChannels;
     unsigned char* data = stbi_load(filePath, &width, &height, &nrChannels, 0);

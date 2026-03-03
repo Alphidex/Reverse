@@ -4,6 +4,7 @@
  */
 
 #include "header/Model.h"
+#include "header/Logger.h"
 #include <stdexcept>
 
 void Model::Draw(Shader& shader) const {
@@ -12,6 +13,8 @@ void Model::Draw(Shader& shader) const {
 } 
 
 Model::Model(const std::string& path) {
+    LOG_INFO("Loading model: " + path);
+    
     Assimp::Importer import;
     const aiScene* scene = import.ReadFile(path, 
         aiProcess_Triangulate | 
