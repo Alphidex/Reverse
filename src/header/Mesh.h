@@ -9,6 +9,7 @@
 // System Packages
 #include<vector>
 #include<string>
+#include<memory>
 
 // External Packages
 #include<glad/glad.h>
@@ -25,7 +26,7 @@
 #include "Texture.h"
 #include "Shader.h"
 
-using std::vector, std::string;
+using std::vector, std::string, std::shared_ptr;
 
 /**
  * @brief Represents a single renderable mesh with geometry and textures
@@ -38,9 +39,9 @@ public:
      * @brief Constructs a mesh with geometry and texture data
      * @param vertices Vertex data (positions, normals, texture coordinates)
      * @param indices Element indices for indexed drawing
-     * @param textures Textures to apply to this mesh
+     * @param textures Shared pointers to textures to apply to this mesh
      */
-    Mesh(vector<Vertex>& vertices, vector<unsigned int>& indices, vector<Texture>& textures);
+    Mesh(vector<Vertex>& vertices, vector<unsigned int>& indices, vector<shared_ptr<Texture>>& textures);
     
     /**
      * @brief Renders the mesh using the specified shader
@@ -76,7 +77,7 @@ public:
 private:
     vector<Vertex> vertices;           ///< Vertex data
     vector<unsigned int> indices;      ///< Element indices
-    vector<Texture> textures;          ///< Texture list
+    vector<shared_ptr<Texture>> textures; ///< Texture list (shared pointers)
     vector<string> textureUniforms;    ///< Texture uniform names
     
     VAO vao;  ///< Vertex Array Object

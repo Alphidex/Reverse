@@ -88,7 +88,7 @@ void Camera::UpdateShader(Shader& shader, const char* uniform)
     glUniformMatrix4fv(glGetUniformLocation(shader.getID(), uniform), 1, GL_FALSE, glm::value_ptr(cameraView));
 }
 
-void Camera::Update(GLFWwindow* window, float deltaTime, std::vector<Shader>& shaderList, const char* uniform)
+void Camera::Update(GLFWwindow* window, float deltaTime, std::vector<std::shared_ptr<Shader>>& shaderList, const char* uniform)
 {
     KeyboardMovement(window, deltaTime);
     MouseMovement(window, deltaTime);
@@ -108,8 +108,8 @@ void Camera::Update(GLFWwindow* window, float deltaTime, std::vector<Shader>& sh
 
     cameraView = projection * view;
 
-    for (Shader& shader : shaderList)
-        UpdateShader(shader, uniform);
+    for (auto& shader : shaderList)
+        UpdateShader(*shader, uniform);
 }
 
 void Camera::setPerspective(float aspectRatio, float nearPlane, float farPlane){
