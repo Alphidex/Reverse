@@ -25,6 +25,7 @@
 #include "EBO.h"
 #include "Texture.h"
 #include "Shader.h"
+#include "Material.h"
 
 using std::vector, std::string, std::shared_ptr;
 
@@ -44,6 +45,14 @@ public:
     Mesh(vector<Vertex>& vertices, vector<unsigned int>& indices, vector<shared_ptr<Texture>>& textures);
     
     /**
+     * @brief Constructs a mesh with a material
+     * @param vertices Vertex data (positions, normals, texture coordinates)
+     * @param indices Element indices for indexed drawing
+     * @param material Shared pointer to the material to use for rendering
+     */
+    Mesh(vector<Vertex>& vertices, vector<unsigned int>& indices, shared_ptr<Material> material);
+    
+    /**
      * @brief Renders the mesh using the specified shader
      * @param shader Shader program to use
      * @param uniform Name of the model matrix uniform in the shader
@@ -51,8 +60,27 @@ public:
     void Draw(Shader& shader, const char* uniform) const;
     
     /**
+     * @brief Renders the mesh using its assigned material
+     * @details Automatically binds the material and sets the model matrix
+     */
+    void Draw() const;
+    
+    /**
+     * @brief Sets the material for this mesh
+     * @param material Shared pointer to the material
+     */
+    void setMaterial(shared_ptr<Material> material);
+    
+    /**
+     * @brief Gets the material of this mesh
+     * @return Shared pointer to the material, or nullptr if not set
+     */
+    shared_ptr<Material> getMaterial() const;
+    
+    /**
      * @brief Frees GPU resources
      */
+    shared_ptr<Material> material;     ///< Material for rendering (optional)
     void Delete();
     
     /**

@@ -46,7 +46,7 @@ Texture::Texture(const char* filePath, const char* type) : path(filePath), type(
 void Texture::Bind(Shader& shader, const char* uniform, int texUnit) const {
     glActiveTexture(GL_TEXTURE0 + texUnit);
     glBindTexture(GL_TEXTURE_2D, ID);
-    glUniform1i(glGetUniformLocation(shader.getID(), uniform), texUnit);
+    shader.setInt(uniform, texUnit);
 }
 
 string Texture::getType() const {
