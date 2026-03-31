@@ -20,7 +20,7 @@ void Entity::update(float deltaTime) {
     }
     
     // Update all enabled components
-    for (auto& component : components) {
+    for (auto& [_, component] : componentMap) {
         if (component && component->isEnabled()) {
             component->update(deltaTime);
         }
@@ -31,12 +31,11 @@ void Entity::onDestroy() {
     LOG_DEBUG("Entity destroyed: " + name);
     
     // Detach all components
-    for (auto& component : components) {
+    for (auto& [_, component] : componentMap) {
         if (component) {
             component->onDetach();
         }
     }
-    
-    components.clear();
+
     componentMap.clear();
 }

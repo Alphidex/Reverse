@@ -1,7 +1,7 @@
 /**
  * @file Mesh.h
  * @brief Individual mesh representation with rendering capabilities
- * @details Encapsulates vertex data, indices, textures, and transformation state
+ * @details Encapsulates vertex data, indices, and textures
  */
 
 #pragma once
@@ -31,7 +31,7 @@ using std::vector, std::string, std::shared_ptr;
 
 /**
  * @brief Represents a single renderable mesh with geometry and textures
- * @details Manages vertex buffers, element buffers, and transformation matrices
+ * @details Manages vertex buffers and element buffers
  */
 class Mesh
 {
@@ -42,7 +42,7 @@ public:
      * @param indices Element indices for indexed drawing
      * @param textures Shared pointers to textures to apply to this mesh
      */
-    Mesh(vector<Vertex>& vertices, vector<unsigned int>& indices, vector<shared_ptr<Texture>>& textures);
+    Mesh(const vector<Vertex>& vertices, const vector<unsigned int>& indices, const vector<shared_ptr<Texture>>& textures);
     
     /**
      * @brief Constructs a mesh with a material
@@ -50,20 +50,26 @@ public:
      * @param indices Element indices for indexed drawing
      * @param material Shared pointer to the material to use for rendering
      */
-    Mesh(vector<Vertex>& vertices, vector<unsigned int>& indices, shared_ptr<Material> material);
+    Mesh(const vector<Vertex>& vertices, const vector<unsigned int>& indices, shared_ptr<Material> material);
     
     /**
      * @brief Renders the mesh using the specified shader
      * @param shader Shader program to use
      * @param uniform Name of the model matrix uniform in the shader
      */
-    void Draw(Shader& shader, const char* uniform) const;
+    void draw(Shader& shader, const char* uniform) const;
     
     /**
      * @brief Renders the mesh using its assigned material
      * @details Automatically binds the material and sets the model matrix
      */
-    void Draw() const;
+    void draw() const;
+
+    /**
+     * @brief Renders the mesh using its assigned material and a provided model matrix
+     * @param model Model matrix to use for rendering
+     */
+    void draw(const glm::mat4& model) const;
     
     /**
      * @brief Sets the material for this mesh
@@ -77,30 +83,7 @@ public:
      */
     shared_ptr<Material> getMaterial() const;
     
-    /**
-     * @brief Frees GPU resources
-     */
     shared_ptr<Material> material;     ///< Material for rendering (optional)
-    void Delete();
-    
-    /**
-     * @brief Sets the mesh's world position
-     * @param position New position vector
-     */
-    void setPosition(glm::vec3 position);
-    
-    /**
-     * @brief Sets the mesh's rotation
-     * @param rotationDegrees Rotation angle in degrees
-     * @param axis Rotation axis
-     */
-    void setRotation(float rotationDegrees, glm::vec3 axis);
-    
-    /**
-     * @brief Sets the mesh's scale
-     * @param scale Scale vector for each axis
-     */
-    void setScale(glm::vec3 scale);
     
 private:
     vector<Vertex> vertices;           ///< Vertex data
@@ -112,8 +95,4 @@ private:
     EBO ebo;  ///< Element Buffer Object
     VBO vbo;  ///< Vertex Buffer Object
 
-    glm::vec3 position = glm::vec3(0, 0, 0);    ///< World position
-    float rotation = 0.0f;                       ///< Rotation angle (radians)
-    glm::vec3 rotationAxis = glm::vec3(0, 0, 1); ///< Rotation axis
-    glm::vec3 scale = glm::vec3(1, 1, 1);        ///< Scale factors
 };

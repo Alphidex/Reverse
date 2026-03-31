@@ -14,31 +14,24 @@ vao(),
 vbo(vertices.data(), vertices.size() * sizeof(Vertex)),
 ebo(indices.data(), indices.size() * sizeof(unsigned int))
 {
-    vao.Bind();
-    vbo.Bind();
-    ebo.Bind();
+    vao.bind();
+    vbo.bind();
+    ebo.bind();
 
-    vao.LinkAttrib(vbo, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, Vertex::Position));
-    vao.LinkAttrib(vbo, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, Vertex::Normal));
-    vao.LinkAttrib(vbo, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, Vertex::TexCoord));
+    vao.linkAttrib(vbo, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, Vertex::Position));
+    vao.linkAttrib(vbo, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, Vertex::Normal));
+    vao.linkAttrib(vbo, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, Vertex::TexCoord));
     
-    vao.Unbind();
-    vbo.Unbind();
-    ebo.Unbind();
+    vao.unbind();
+    vbo.unbind();
+    ebo.unbind();
 }
 
 void Drawable::Draw()
 {
-    shader.Enable();
+    shader.enable();
 
-    vao.Bind();
+    vao.bind();
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-    vao.Unbind();
-}
-
-void Drawable::Delete()
-{
-    vao.Delete();
-    vbo.Delete();
-    ebo.Delete();
+    vao.unbind();
 }

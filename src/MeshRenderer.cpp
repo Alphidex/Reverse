@@ -16,58 +16,40 @@ MeshRenderer::MeshRenderer(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material>
     if (!material) {
         LOG_WARNING("MeshRenderer created with null material");
     }
+    
+    if (this->mesh && this->material) {
+        this->mesh->setMaterial(this->material);
+    }
 }
 
 void MeshRenderer::render() {
-    if (!enabled || !mesh || !material || !owner) {
+    if (!enabled) {
+        return;
+    }
+
+    if (!owner) {
+        LOG_ERROR("MeshRenderer::render called without owner entity");
+        return;
+    }
+
+    if (!mesh) {
+        LOG_ERROR("MeshRenderer::render called with null mesh");
+        return;
+    }
+
+    if (!material) {
+        LOG_ERROR("MeshRenderer::render called with null material");
         return;
     }
     
-    // Get entity's transform
-    const Transform& transform = owner->getTransform();
-    
-    // Use the material
-    material->use();
-    
-    // Set the model matrix from entity's transform
     auto shader = material->getShader();
-    if (shader) {
-        shader->setMat4("model", transform.getModelMatrix());
+    if (!shader) {
+        LOG_ERROR("MeshRenderer::render encountered material with null shader");
+        return;
     }
-    
-    // Render the mesh (using the old mesh rendering code)
-    // We need to manually bind VAO and draw since we're not using Mesh::Draw()
-    // Actually, let's just temporarily set the mesh's transform and call its draw
-    // This is a bit hacky but maintains compatibility
-    // TODO: Refactor Mesh to separate transform from geometry
-    
-    // For now, we'll use a workaround - access mesh internals
-    // Better approach: make Mesh::Draw() accept a transform parameter
-    // or separate rendering logic from mesh data
-    
-    // Quick solution: We already have material.use() which binds shader and textures
-    // Just need to draw the geometry - this requires access to mesh's VAO
-    // Since we can't easily do that without refactoring Mesh, let's use the existing Draw()
-    // but it will use mesh's internal transform instead of entity's transform
-    
-    // TEMPORARY: Log a warning about this limitation
-    static bool warningShown = false;
-    if (!warningShown) {
-        LOG_WARNING("MeshRenderer: Using mesh's internal transform. TODO: Separate mesh geometry from transform");
-        warningShown = true;
-    }
-    
-    // For now, sync mesh transform with entity transform
-    // This is not ideal but works as a temporary solution
-    mesh->setPosition(transform.getPosition());
-    mesh->setRotation(0.0f, glm::vec3(0, 1, 0)); // Simplified - full rotation sync would need euler conversion
-    mesh->setScale(transform.getScale());
-    
-    // Use material to render (it will bind shader and textures)
-    material->use();
-    
-    // Draw the mesh (it will use its internal transform, which we just synced)
-    mesh->Draw(); // This uses the material-based Draw()
+
+    mesh->setMaterial(material);
+    mesh->draw(owner->getTransform().getModelMatrix());
 }
 
 void MeshRenderer::setMesh(std::shared_ptr<Mesh> newMesh) {

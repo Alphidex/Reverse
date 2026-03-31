@@ -7,12 +7,12 @@ class VBO
 {
 public:
 	// Constructor that generates a Vertex Buffer Object and links it to vertices
-	VBO(void* vertices, GLsizeiptr size);
+	VBO(const void* vertices, GLsizeiptr size);
+	~VBO();
 
-	void Bind();
-	void Unbind();
-	void Delete();
+	void bind() const;
+	void unbind() const;
 
 private:
-	GLuint ID;
+	GLuint ID = 0;
 };

@@ -42,16 +42,28 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)  {    LOG_DEBUG
     glDeleteShader(fragmentShader);
 }
 
+Shader::~Shader() {
+    if (ID != 0) {
+        glDeleteProgram(ID);
+        ID = 0;
+    }
+}
+
 GLuint Shader::getID() const {
     return ID;
 }
 
-void Shader::Enable() const {
+void Shader::enable() const {
     glUseProgram(ID);
 }
 
-void Shader::Delete() {
-    glDeleteProgram(ID);
+void Shader::ensureProgramBound(const string& uniformName) const {
+    GLint currentProgram = 0;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &currentProgram);
+    if (static_cast<GLuint>(currentProgram) != ID) {
+        LOG_WARNING("Uniform '" + uniformName + "' set while shader was not bound. Auto-binding shader program.");
+        enable();
+    }
 }
 
 void Shader::compileErrors(unsigned int shader, const string& type) {
@@ -95,41 +107,51 @@ GLint Shader::getUniformLocation(const string& name) const {
 // ===== Type-safe Uniform Setters =====
 
 void Shader::setInt(const string& name, int value) {
+    ensureProgramBound(name);
     glUniform1i(getUniformLocation(name), value);
 }
 
 void Shader::setFloat(const string& name, float value) {
+    ensureProgramBound(name);
     glUniform1f(getUniformLocation(name), value);
 }
 
 void Shader::setVec2(const string& name, const glm::vec2& value) {
+    ensureProgramBound(name);
     glUniform2fv(getUniformLocation(name), 1, glm::value_ptr(value));
 }
 
 void Shader::setVec2(const string& name, float x, float y) {
+    ensureProgramBound(name);
     glUniform2f(getUniformLocation(name), x, y);
 }
 
 void Shader::setVec3(const string& name, const glm::vec3& value) {
+    ensureProgramBound(name);
     glUniform3fv(getUniformLocation(name), 1, glm::value_ptr(value));
 }
 
 void Shader::setVec3(const string& name, float x, float y, float z) {
+    ensureProgramBound(name);
     glUniform3f(getUniformLocation(name), x, y, z);
 }
 
 void Shader::setVec4(const string& name, const glm::vec4& value) {
+    ensureProgramBound(name);
     glUniform4fv(getUniformLocation(name), 1, glm::value_ptr(value));
 }
 
 void Shader::setVec4(const string& name, float x, float y, float z, float w) {
+    ensureProgramBound(name);
     glUniform4f(getUniformLocation(name), x, y, z, w);
 }
 
 void Shader::setMat3(const string& name, const glm::mat3& value) {
+    ensureProgramBound(name);
     glUniformMatrix3fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value));
 }
 
 void Shader::setMat4(const string& name, const glm::mat4& value) {
+    ensureProgramBound(name);
     glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, glm::value_ptr(value));
 }

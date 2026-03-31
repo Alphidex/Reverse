@@ -4,59 +4,68 @@
  */
 
 #include "header/Mesh.h"
+#include "header/Logger.h"
+#include <stdexcept>
 
-Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<shared_ptr<Texture>>& textures): 
+Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices, const std::vector<shared_ptr<Texture>>& textures): 
 vertices(vertices), indices(indices), textures(textures),
 vao(),
 vbo(vertices.data(), vertices.size() * sizeof(Vertex)),
 ebo(indices.data(), indices.size() * sizeof(unsigned int))
 {
-    vao.Bind();
-    vbo.Bind();
-    ebo.Bind();
+    vao.bind();
+    vbo.bind();
+    ebo.bind();
 
-    vao.LinkAttrib(vbo, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, Vertex::Position));
-    vao.LinkAttrib(vbo, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, Vertex::Normal));
-    vao.LinkAttrib(vbo, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, Vertex::TexCoord));
+    vao.linkAttrib(vbo, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, Vertex::Position));
+    vao.linkAttrib(vbo, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, Vertex::Normal));
+    vao.linkAttrib(vbo, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, Vertex::TexCoord));
 
-    vao.Unbind();
-    vbo.Unbind();
-    ebo.Unbind();
+    vao.unbind();
+    vbo.unbind();
+    ebo.unbind();
 }
 
-Mesh::Mesh(vector<Vertex>& vertices, vector<unsigned int>& indices, shared_ptr<Material> material): 
+Mesh::Mesh(const vector<Vertex>& vertices, const vector<unsigned int>& indices, shared_ptr<Material> material): 
 vertices(vertices), indices(indices), material(material),
 vao(),
 vbo(vertices.data(), vertices.size() * sizeof(Vertex)),
 ebo(indices.data(), indices.size() * sizeof(unsigned int))
 {
-    vao.Bind();
-    vbo.Bind();
-    ebo.Bind();
+    vao.bind();
+    vbo.bind();
+    ebo.bind();
 
-    vao.LinkAttrib(vbo, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, Vertex::Position));
-    vao.LinkAttrib(vbo, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, Vertex::Normal));
-    vao.LinkAttrib(vbo, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, Vertex::TexCoord));
+    vao.linkAttrib(vbo, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, Vertex::Position));
+    vao.linkAttrib(vbo, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, Vertex::Normal));
+    vao.linkAttrib(vbo, 2, 2, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, Vertex::TexCoord));
 
-    vao.Unbind();
-    vbo.Unbind();
-    ebo.Unbind();
+    vao.unbind();
+    vbo.unbind();
+    ebo.unbind();
 }
 
-void Mesh::Draw(Shader& shader, const char* uniform) const {
-    shader.Enable();
+void Mesh::draw(Shader& shader, const char* uniform) const {
+    if (!uniform) {
+        LOG_ERROR("Mesh::draw called with invalid uniform name");
+        throw std::invalid_argument("Mesh::draw requires a valid model uniform name");
+    }
+
+    shader.enable();
     
     // Apply transformation matrix
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, position);
-    model = glm::rotate(model, rotation, rotationAxis);
-    model = glm::scale(model, scale);
     shader.setMat4(uniform, model);
 
     // Bind textures
     unsigned int diffuseNr = 1;
     unsigned int specularNr = 1;
     for (unsigned int i = 0; i < textures.size(); i++) {
+        if (!textures[i]) {
+            LOG_ERROR("Mesh::draw encountered null texture at index " + std::to_string(i));
+            throw std::runtime_error("Mesh::draw cannot bind null texture");
+        }
+
         std::string number;
         std::string texType = textures[i]->getType();
         
@@ -66,35 +75,40 @@ void Mesh::Draw(Shader& shader, const char* uniform) const {
             number = std::to_string(specularNr++);
 
         const char* name = "diffuse[0]";  // TODO: Make this dynamic
-        textures[i]->Bind(shader, name, i);
+        textures[i]->bind(shader, name, i);
     }
 
     // Render mesh
-    vao.Bind();
+    vao.bind();
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-    vao.Unbind();
+    vao.unbind();
 }
 
-void Mesh::Draw() const {
+void Mesh::draw() const {
+    draw(glm::mat4(1.0f));
+}
+
+void Mesh::draw(const glm::mat4& model) const {
     if (!material) {
-        return; // No material set, cannot draw
+        LOG_ERROR("Mesh::draw called without a material");
+        throw std::runtime_error("Mesh::draw requires a valid material");
     }
     
     // Use material (binds shader and textures)
     material->use();
     
-    // Apply transformation matrix
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, position);
-    model = glm::rotate(model, rotation, rotationAxis);
-    model = glm::scale(model, scale);
-    
-    material->getShader()->setMat4("model", model);
+    auto shader = material->getShader();
+    if (!shader) {
+        LOG_ERROR("Mesh::draw encountered material with null shader");
+        throw std::runtime_error("Mesh::draw requires material with valid shader");
+    }
+
+    shader->setMat4("model", model);
     
     // Render mesh
-    vao.Bind();
+    vao.bind();
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-    vao.Unbind();
+    vao.unbind();
 }
 
 void Mesh::setMaterial(shared_ptr<Material> mat) {
@@ -103,26 +117,4 @@ void Mesh::setMaterial(shared_ptr<Material> mat) {
 
 shared_ptr<Material> Mesh::getMaterial() const {
     return material;
-}
-
-void Mesh::Delete()
-{
-    vao.Delete();
-    vbo.Delete();
-    ebo.Delete();
-}
-
-void Mesh::setPosition(glm::vec3 position)
-{   
-    this->position = position;
-}
-
-void Mesh::setRotation(float rotationDegrees, glm::vec3 axis)
-{
-    this->rotation = glm::radians(rotationDegrees);
-    this->rotationAxis = axis;
-}
-
-void Mesh::setScale(glm::vec3 scale){
-    this->scale = scale;
 }

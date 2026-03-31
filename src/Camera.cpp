@@ -10,7 +10,7 @@
 
 Camera::Camera(glm::vec3 position) : position(position) {}
 
-void Camera::KeyboardMovement(GLFWwindow* window, float deltaTime)
+void Camera::keyboardMovement(GLFWwindow* window, float deltaTime)
 {
     float calibratedMovementSpeed = deltaTime * movementSpeed;
 
@@ -43,11 +43,11 @@ void Camera::printPosition() const {
     }
 }
 
-void Camera::setFOV(float newFov) {
+void Camera::setFov(float newFov) {
     fov = glm::clamp(newFov, Config::Camera::MIN_FOV, Config::Camera::MAX_FOV);
 }
 
-void Camera::MouseMovement(GLFWwindow* window, float deltaTime)
+void Camera::mouseMovement(GLFWwindow* window, float deltaTime)
 {
     if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS){
         if (firstClick)
@@ -82,16 +82,16 @@ void Camera::MouseMovement(GLFWwindow* window, float deltaTime)
     }
 }
 
-void Camera::UpdateShader(Shader& shader, const char* uniform)
+void Camera::updateShader(Shader& shader, const char* uniform)
 {
-    shader.Enable();
+    shader.enable();
     shader.setMat4(uniform, cameraView);
 }
 
-void Camera::Update(GLFWwindow* window, float deltaTime, std::vector<std::shared_ptr<Shader>>& shaderList, const char* uniform)
+void Camera::update(GLFWwindow* window, float deltaTime, std::vector<std::shared_ptr<Shader>>& shaderList, const char* uniform)
 {
-    KeyboardMovement(window, deltaTime);
-    MouseMovement(window, deltaTime);
+    keyboardMovement(window, deltaTime);
+    mouseMovement(window, deltaTime);
 
     // Looking
     front.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
@@ -109,7 +109,7 @@ void Camera::Update(GLFWwindow* window, float deltaTime, std::vector<std::shared
     cameraView = projection * view;
 
     for (auto& shader : shaderList)
-        UpdateShader(*shader, uniform);
+        updateShader(*shader, uniform);
 }
 
 void Camera::setPerspective(float aspectRatio, float nearPlane, float farPlane){
@@ -118,10 +118,10 @@ void Camera::setPerspective(float aspectRatio, float nearPlane, float farPlane){
     this->farPlane = farPlane;
 }  
 
-void Scroll_Callback(GLFWwindow* window, double xoffset, double yoffset) {
+void scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
     Camera* camera = static_cast<Camera*>(glfwGetWindowUserPointer(window));
     if (camera) {
-        float currentFov = camera->getFOV();
-        camera->setFOV(currentFov - static_cast<float>(yoffset * Config::Camera::SCROLL_FOV_STEP));
+        float currentFov = camera->getFov();
+        camera->setFov(currentFov - static_cast<float>(yoffset * Config::Camera::SCROLL_FOV_STEP));
     }
 }

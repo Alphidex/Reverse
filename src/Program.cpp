@@ -58,32 +58,32 @@ Program::Program(int width, int height)
     ERROR = false;
 }
 
-void Program::ProcessEvents()
+void Program::processEvents()
 {
     glfwPollEvents();
     processInput(window);
 }
 
-void Program::SwapBuffers()
+void Program::swapBuffers()
 {
     glfwSwapBuffers(window);
 }
 
-void Program::ClearBuffers()
+void Program::clearBuffers()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
-void Program::Terminate()
+void Program::terminate()
 {
     glfwTerminate();
 }
 
-bool Program::Running() const {
+bool Program::isRunning() const {
     return !glfwWindowShouldClose(window);
 }
 
-GLFWwindow* Program::GetWindow() const {
+GLFWwindow* Program::getWindow() const {
     return window;
 }
 

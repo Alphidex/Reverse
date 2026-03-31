@@ -28,8 +28,8 @@ class Container
 {
 public:
     Container(float x, float y, float width, float height, GLFWwindow* window, Shader& shader);
+    ~Container();
     void Draw();
-    void Delete();
 private:
     Drawable* brush;
     vector<Vertex> vertices;

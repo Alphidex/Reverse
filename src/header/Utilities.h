@@ -7,4 +7,4 @@
 
 using std::string;
 
-string readFile(string filename);
+string readFile(const string& filename);

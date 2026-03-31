@@ -6,8 +6,7 @@
 #include "header/Material.h"
 #include "header/Logger.h"
 
-Material::Material(std::shared_ptr<Shader> shader)
-    : shader(shader) {
+Material::Material(std::shared_ptr<Shader> shader) : shader(shader) {
     if (!shader) {
         LOG_ERROR("Material created with null shader");
         throw std::invalid_argument("Material requires a valid shader");
@@ -21,7 +20,7 @@ void Material::use() const {
     }
     
     // Activate the shader
-    shader->Enable();
+    shader->enable();
     
     // Bind all textures
     int diffuseNum = 0;
@@ -51,7 +50,7 @@ void Material::use() const {
             uniformName = type + std::to_string(i);
         }
         
-        texture->Bind(*shader, uniformName.c_str(), static_cast<int>(i));
+        texture->bind(*shader, uniformName.c_str(), static_cast<int>(i));
     }
     
     // Set material properties as uniforms

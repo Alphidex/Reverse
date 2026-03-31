@@ -1,6 +1,6 @@
 #include "header/Utilities.h"
 
-std::string readFile(std::string filename){
+std::string readFile(const std::string& filename){
     std::ifstream in(filename, std::ios::binary);
 	if (in)
 	{

@@ -57,8 +57,7 @@ void Container::Draw()
     brush->Draw();
 }
 
-void Container::Delete()
+Container::~Container()
 {
-    brush->Delete();
     delete brush;
 }

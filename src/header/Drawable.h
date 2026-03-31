@@ -22,7 +22,6 @@ class Drawable{
 public:
     Drawable(Shader& shader, vector<Vertex>& vertices, vector<unsigned int>& indices, vector<Texture>& textures);
     void Draw();
-    void Delete();
 
 private:
     Shader shader;
