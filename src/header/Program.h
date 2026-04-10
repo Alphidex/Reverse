@@ -29,33 +29,33 @@ public:
      * @brief Gets the GLFW window handle
      * @return Pointer to the GLFW window
      */
-    GLFWwindow* GetWindow() const;
+    GLFWwindow* getWindow() const;
     
     /**
      * @brief Processes window events and input
      */
-    void ProcessEvents();
+    void processEvents();
     
     /**
      * @brief Swaps front and back buffers
      */
-    void SwapBuffers();
+    void swapBuffers();
     
     /**
      * @brief Clears color, depth, and stencil buffers
      */
-    void ClearBuffers();
+    void clearBuffers();
     
     /**
      * @brief Terminates GLFW and cleans up resources
      */
-    void Terminate();
+    void terminate();
     
     /**
      * @brief Checks if the window should remain open
      * @return True if window is still running
      */
-    bool Running() const;
+    bool isRunning() const;
 
 private:
     GLFWwindow* window; ///< GLFW window handle

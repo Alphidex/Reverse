@@ -25,6 +25,7 @@ public:
      * @brief Default constructor (creates uninitialized texture)
      */
     Texture();
+    ~Texture();
     
     /**
      * @brief Constructs a texture from an image file
@@ -40,7 +41,7 @@ public:
      * @param uniform Name of the sampler uniform in the shader
      * @param texUnit Texture unit index (0-31)
      */
-    void Bind(Shader& shader, const char* uniform, int texUnit) const;
+    void bind(Shader& shader, const char* uniform, int texUnit) const;
     
     /**
      * @brief Gets the texture type identifier
@@ -49,7 +50,7 @@ public:
     string getType() const;
     
 private:
-    GLuint ID;      ///< OpenGL texture identifier
+    GLuint ID = 0;  ///< OpenGL texture identifier
     string type{};  ///< Texture type (diffuse, specular, etc.)
     string path{};  ///< File path of the texture
 };

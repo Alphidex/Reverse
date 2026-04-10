@@ -5,10 +5,10 @@
 class EBO
 {
 public:
-	EBO(void* indices, GLsizeiptr size);
-	void Bind();
-	void Unbind();
-	void Delete();
+	EBO(const void* indices, GLsizeiptr size);
+	~EBO();
+	void bind() const;
+	void unbind() const;
 private:
-	GLuint ID;
+	GLuint ID = 0;
 };

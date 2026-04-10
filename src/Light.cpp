@@ -7,7 +7,7 @@
 
 DirectionalLight::DirectionalLight(const glm::vec3 direction, const glm::vec3 ambient, const glm::vec3 diffuse, const glm::vec3 specular) {
     dir = direction;
-    Light::LightProperties(ambient, diffuse, specular);
+    Light::lightProperties(ambient, diffuse, specular);
 }
 
 PointLight::PointLight(const glm::vec3& direction, const glm::vec3& position, float constant, float linear, float quadratic) {
@@ -25,15 +25,15 @@ SpotLight::SpotLight(const glm::vec3& direction, const glm::vec3& position, floa
     outerCutOff = cutOffOuter;
 }
 
-void Light::LightProperties(const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular) 
+void Light::lightProperties(const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular) 
 { 
     this->ambient = ambient;
     this->diffuse = diffuse;
     this->specular = specular;
 }
 
-void DirectionalLight::ShaderData(Shader& shader) {
-    shader.Enable();
+void DirectionalLight::shaderData(Shader& shader) {
+    shader.enable();
     
     shader.setVec3("dirLight.direction", dir);
     shader.setVec3("dirLight.ambient", ambient);
@@ -41,8 +41,8 @@ void DirectionalLight::ShaderData(Shader& shader) {
     shader.setVec3("dirLight.specular", specular);
 }
 
-void PointLight::ShaderData(Shader& shader) {
-    shader.Enable();
+void PointLight::shaderData(Shader& shader) {
+    shader.enable();
     
     shader.setVec3("pointLight.position", pos);
     shader.setFloat("pointLight.constant", attConstant);
@@ -53,8 +53,8 @@ void PointLight::ShaderData(Shader& shader) {
     shader.setVec3("pointLight.specular", specular);
 }
 
-void SpotLight::ShaderData(Shader& shader) {
-    shader.Enable();
+void SpotLight::shaderData(Shader& shader) {
+    shader.enable();
     
     shader.setVec3("spotLight.direction", dir);
     shader.setVec3("spotLight.position", pos);

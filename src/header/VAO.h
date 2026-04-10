@@ -7,13 +7,13 @@ class VAO
 {
 public:
 	VAO();
+	~VAO();
 
 	// Define layout attributes
-	void LinkAttrib(VBO VBO, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset);
-	void Bind() const;
-	void Unbind() const;
-	void Delete();
+	void linkAttrib(const VBO& vbo, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, const void* offset);
+	void bind() const;
+	void unbind() const;
 
 private:
-	GLuint ID;
+	GLuint ID = 0;
 };

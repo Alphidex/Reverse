@@ -8,9 +8,9 @@
 #include "header/Logger.h"
 #include <stdexcept>
 
-void Model::Draw(Shader& shader) const {
+void Model::draw(Shader& shader) const {
     for (const auto& mesh : meshes)
-        mesh.Draw(shader, "model");
+        mesh.draw(shader, "model");
 } 
 
 Model::Model(const std::string& path) {

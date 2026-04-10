@@ -7,11 +7,10 @@
 #pragma once
 
 #include <memory>
-#include <vector>
 #include <string>
+#include <type_traits>
 #include <typeindex>
 #include <unordered_map>
-#include <algorithm>
 #include "Transform.h"
 #include "Component.h"
 
@@ -45,12 +44,17 @@ public:
     template<typename T, typename... Args>
     std::shared_ptr<T> addComponent(Args&&... args) {
         static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
-        
+
+        const std::type_index type(typeid(T));
         auto component = std::make_shared<T>(std::forward<Args>(args)...);
         component->onAttach(this);
-        
-        components.push_back(component);
-        componentMap[std::type_index(typeid(T))] = component;
+
+        auto existing = componentMap.find(type);
+        if (existing != componentMap.end() && existing->second) {
+            existing->second->onDetach();
+        }
+
+        componentMap[type] = component;
         
         return component;
     }
@@ -89,26 +93,22 @@ public:
     template<typename T>
     bool removeComponent() {
         auto it = componentMap.find(std::type_index(typeid(T)));
-        if (it != componentMap.end()) {
-            auto comp = it->second;
-            comp->onDetach();
-            componentMap.erase(it);
-            
-            // Remove from components vector
-            components.erase(
-                std::remove(components.begin(), components.end(), comp),
-                components.end()
-            );
-            return true;
+        if (it == componentMap.end()) {
+            return false;
         }
-        return false;
+
+        if (it->second) {
+            it->second->onDetach();
+        }
+        componentMap.erase(it);
+        return true;
     }
     
     /**
      * @brief Gets all components
-     * @return Vector of component pointers
+    * @return Map of component type to component pointer
      */
-    const std::vector<std::shared_ptr<Component>>& getComponents() const { return components; }
+    const std::unordered_map<std::type_index, std::shared_ptr<Component>>& getComponents() const { return componentMap; }
     
     // ===== Transform Access =====
     
@@ -162,6 +162,5 @@ private:
     std::string name;                                                    ///< Entity name
     bool active = true;                                                  ///< Active state
     Transform transform;                                                 ///< Entity transform
-    std::vector<std::shared_ptr<Component>> components;                 ///< Component list
     std::unordered_map<std::type_index, std::shared_ptr<Component>> componentMap; ///< Fast component lookup
 };

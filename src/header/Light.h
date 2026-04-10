@@ -33,13 +33,13 @@ public:
      * @param diffuse Diffuse light contribution
      * @param specular Specular highlight contribution
      */
-    void LightProperties(const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular);
+    void lightProperties(const glm::vec3& ambient, const glm::vec3& diffuse, const glm::vec3& specular);
     
     /**
      * @brief Uploads light data to shader uniforms
      * @param shader Shader to update
      */
-    void ShaderData(Shader& shader);
+    void shaderData(Shader& shader);
     
 protected:
     glm::vec3 dir;      ///< Light direction
@@ -73,7 +73,7 @@ public:
      * @brief Uploads directional light data to shader
      * @param shader Shader to update
      */
-    void ShaderData(Shader& shader);
+    void shaderData(Shader& shader);
 };
 
 /**
@@ -96,7 +96,7 @@ public:
      * @brief Uploads point light data to shader
      * @param shader Shader to update
      */
-    void ShaderData(Shader& shader);
+    void shaderData(Shader& shader);
 };
 
 /**
@@ -118,7 +118,7 @@ public:
      * @brief Uploads spotlight data to shader
      * @param shader Shader to update
      */
-    void ShaderData(Shader& shader);
+    void shaderData(Shader& shader);
 
 private:
     float innerCutOff; ///< Inner cone angle

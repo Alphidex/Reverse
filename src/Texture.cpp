@@ -10,6 +10,13 @@
 
 Texture::Texture() {}
 
+Texture::~Texture() {
+    if (ID != 0) {
+        glDeleteTextures(1, &ID);
+        ID = 0;
+    }
+}
+
 Texture::Texture(const char* filePath, const char* type) : path(filePath), type(type) {
     LOG_DEBUG("Loading texture: " + std::string(filePath));
     
@@ -43,7 +50,7 @@ Texture::Texture(const char* filePath, const char* type) : path(filePath), type(
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void Texture::Bind(Shader& shader, const char* uniform, int texUnit) const {
+void Texture::bind(Shader& shader, const char* uniform, int texUnit) const {
     glActiveTexture(GL_TEXTURE0 + texUnit);
     glBindTexture(GL_TEXTURE_2D, ID);
     shader.setInt(uniform, texUnit);

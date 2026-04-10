@@ -32,6 +32,7 @@ public:
      * @throws std::runtime_error if shader compilation or linking fails
      */
     Shader(const char* vertexPath, const char* fragmentPath);
+    ~Shader();
     
     /**
      * @brief Gets the OpenGL shader program ID
@@ -42,12 +43,7 @@ public:
     /**
      * @brief Activates this shader program for rendering
      */
-    void Enable() const;
-    
-    /**
-     * @brief Deletes the shader program and frees GPU resources
-     */
-    void Delete();
+    void enable() const;
 
     // ===== Type-safe uniform setters with automatic caching =====
     
@@ -128,8 +124,14 @@ public:
     void setMat4(const string& name, const glm::mat4& value);
 
 private:
-    GLuint ID; ///< OpenGL shader program identifier
+    GLuint ID = 0; ///< OpenGL shader program identifier
     mutable std::unordered_map<string, GLint> uniformLocationCache; ///< Cache for uniform locations
+
+    /**
+     * @brief Ensures this shader program is currently bound before setting uniforms
+     * @param uniformName Uniform name being set (for diagnostics)
+     */
+    void ensureProgramBound(const string& uniformName) const;
     
     /**
      * @brief Gets a uniform location with caching to avoid redundant lookups

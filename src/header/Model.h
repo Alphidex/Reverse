@@ -40,7 +40,7 @@ public:
      * @brief Renders all meshes in the model
      * @param shader Shader program to use for rendering
      */
-    void Draw(Shader& shader) const;
+    void draw(Shader& shader) const;
 
 private:
     vector<Mesh> meshes;           ///< All meshes in this model

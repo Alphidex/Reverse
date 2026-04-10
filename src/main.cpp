@@ -116,7 +116,7 @@ int main(){
         
         // Program contains all the GLFW/GLAD config settings and creates window
         Program program(Config::Window::DEFAULT_WIDTH, Config::Window::DEFAULT_HEIGHT);
-        GLFWwindow* window = program.GetWindow();
+        GLFWwindow* window = program.getWindow();
         
         // Get ResourceManager instance
         ResourceManager& resourceManager = ResourceManager::getInstance();
@@ -145,7 +145,6 @@ int main(){
         // Create meshes with materials
         Mesh cube(cubeVertices, cubeIndices, marbleMaterial);
         Mesh cube2(cubeVertices, cubeIndices, marbleMaterial);
-        cube2.setPosition(glm::vec3(2.0f, 0.0f, 0.0f));
         Mesh plane(planeVertices, planeIndices, wallMaterial);
 
         // ===== NEW: Entity/Component System Demo =====
@@ -174,18 +173,18 @@ int main(){
         // Camera
         Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
         glfwSetWindowUserPointer(window, &camera);  // Set camera as user pointer for callbacks
-        glfwSetScrollCallback(window, Scroll_Callback);
+        glfwSetScrollCallback(window, scrollCallback);
 
         // Light configuration
         glm::vec3 lightDir(0.0f, -1.0f, 0.0f);
 
-        while(program.Running())
+        while(program.isRunning())
         {           
             float currentFrame = glfwGetTime();
             deltaTime = currentFrame - lastFrame; // Frame difference in seconds
             lastFrame = currentFrame;
 
-            program.ProcessEvents();
+            program.processEvents();
 
             // Clear buffers with configured background color
             program.ClearBuffers();
@@ -194,9 +193,9 @@ int main(){
             mainScene.update(deltaTime);
 
             // Render old meshes (legacy system)
-            cube.Draw();
-            cube2.Draw();
-            plane.Draw();
+            cube.draw();
+            cube2.draw(glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f)));
+            plane.draw();
             
             // Render entities using new system
             for (const auto& entity : mainScene.getEntities()) {
@@ -212,9 +211,9 @@ int main(){
             glfwGetFramebufferSize(window, &width, &height);
             float aspectRatio = static_cast<float>(width) / static_cast<float>(height);
             camera.setPerspective(aspectRatio, Config::Rendering::NEAR_PLANE, Config::Rendering::FAR_PLANE);
-            camera.Update(window, deltaTime, shaderList, "cameraView");
+            camera.update(window, deltaTime, shaderList, "cameraView");
 
-            program.SwapBuffers();
+            program.swapBuffers();
         }
 
         // Log resource statistics before cleanup
@@ -226,7 +225,7 @@ int main(){
 
         // Cleaning Up
         LOG_INFO("Shutting down engine...");
-        program.Terminate();
+        program.terminate();
         LOG_INFO("======== Reverse Engine Stopped ========");
         return 0;
     }

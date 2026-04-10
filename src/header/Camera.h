@@ -43,7 +43,7 @@ public:
      * @param shaderList List of shared pointers to shaders to update with camera matrix
      * @param uniform Name of the uniform variable in shaders
      */
-    void Update(GLFWwindow* window, float deltaTime, std::vector<std::shared_ptr<Shader>>& shaderList, const char* uniform);
+    void update(GLFWwindow* window, float deltaTime, std::vector<std::shared_ptr<Shader>>& shaderList, const char* uniform);
     
     /**
      * @brief Sets the perspective projection parameters
@@ -62,13 +62,13 @@ public:
      * @brief Gets the current field of view
      * @return Current FOV in degrees
      */
-    float getFOV() const { return fov; }
+    float getFov() const { return fov; }
     
     /**
      * @brief Sets the field of view
      * @param newFov New FOV in degrees (clamped to 1-45)
      */
-    void setFOV(float newFov);
+    void setFov(float newFov);
 
 private:
     // Camera orientation
@@ -102,21 +102,21 @@ private:
      * @param window GLFW window
      * @param deltaTime Frame time delta
      */
-    void KeyboardMovement(GLFWwindow* window, float deltaTime);
+    void keyboardMovement(GLFWwindow* window, float deltaTime);
     
     /**
      * @brief Handles mouse input for camera rotation
      * @param window GLFW window
      * @param deltaTime Frame time delta
      */
-    void MouseMovement(GLFWwindow* window, float deltaTime);
+    void mouseMovement(GLFWwindow* window, float deltaTime);
     
     /**
      * @brief Updates a single shader with camera matrix
      * @param shader Shader to update
      * @param uniform Uniform variable name
      */
-    void UpdateShader(Shader& shader, const char* uniform);
+    void updateShader(Shader& shader, const char* uniform);
 };
 
 /**
@@ -125,5 +125,5 @@ private:
  * @param xoffset Horizontal scroll offset
  * @param yoffset Vertical scroll offset
  */
-void Scroll_Callback(GLFWwindow* window, double xoffset, double yoffset);
+void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 
