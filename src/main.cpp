@@ -187,7 +187,7 @@ int main(){
             program.processEvents();
 
             // Clear buffers with configured background color
-            program.ClearBuffers();
+            program.clearBuffers();
 
             // Update scene (all entities and their components)
             mainScene.update(deltaTime);
