@@ -16,7 +16,6 @@
 #include "header/Light.h"
 #include "header/Model.h"
 #include "header/Program.h"
-#include "header/Interface.h"
 #include "header/Config.h"
 #include "header/Logger.h"
 #include "header/ResourceManager.h"
@@ -35,8 +34,20 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 
+// Plane mesh data
+vector<Vertex> planeVertices = {
+    {{-5.0f, -0.5f, -5.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 2.0f}},
+    {{ 5.0f, -0.5f, -5.0f}, {0.0f, 1.0f, 0.0f}, {2.0f, 2.0f}},
+    {{ 5.0f, -0.5f,  5.0f}, {0.0f, 1.0f, 0.0f}, {2.0f, 0.0f}},
+    {{-5.0f, -0.5f,  5.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}}
+};
 
-// Cube mesh data
+vector<unsigned int> planeIndices = {
+    0, 1, 2,
+    2, 3, 0
+};
+
+// Cube vertex data
 vector<Vertex> cubeVertices = {
     // Front face (Z+)
     {{-0.5f, -0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}},
@@ -75,6 +86,7 @@ vector<Vertex> cubeVertices = {
     {{-0.5f, -0.5f,  0.5f}, {0.0f, -1.0f, 0.0f}, {0.0f, 1.0f}}
 };
 
+// Cube faces
 vector<unsigned int> cubeIndices = {
     // Front face
     0, 1, 2,  2, 3, 0,
@@ -88,19 +100,6 @@ vector<unsigned int> cubeIndices = {
     16, 17, 18,  18, 19, 16,
     // Bottom face
     20, 21, 22,  22, 23, 20
-};
-
-// Plane mesh data
-vector<Vertex> planeVertices = {
-    {{-5.0f, -0.5f, -5.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 2.0f}},
-    {{ 5.0f, -0.5f, -5.0f}, {0.0f, 1.0f, 0.0f}, {2.0f, 2.0f}},
-    {{ 5.0f, -0.5f,  5.0f}, {0.0f, 1.0f, 0.0f}, {2.0f, 0.0f}},
-    {{-5.0f, -0.5f,  5.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}}
-};
-
-vector<unsigned int> planeIndices = {
-    0, 1, 2,
-    2, 3, 0
 };
 
 
@@ -124,11 +123,7 @@ int main(){
         
         // Load shaders using ResourceManager
         auto shaderProgram = resourceManager.loadShader(Config::Shaders::DEFAULT_VERTEX, Config::Shaders::DEFAULT_FRAGMENT);
-        auto interfaceProgram = resourceManager.loadShader(Config::Shaders::INTERFACE_VERTEX, Config::Shaders::INTERFACE_FRAGMENT);
         vector<std::shared_ptr<Shader>> shaderList = {shaderProgram};
-        
-        /* Interface Setup. Responsible for anything UI related */
-        Interface ui(window, *interfaceProgram);
         
         // Load textures using ResourceManager (must be after OpenGL context is created)
         auto marbleTexture = resourceManager.loadTexture("./resource/textures/marble.jpg", "diffuse");
@@ -193,12 +188,6 @@ int main(){
             program.ProcessEvents();
 
             // Clear buffers with configured background color
-            ui.ClearBackgroundColor(
-                Config::Rendering::CLEAR_COLOR_R,
-                Config::Rendering::CLEAR_COLOR_G,
-                Config::Rendering::CLEAR_COLOR_B,
-                Config::Rendering::CLEAR_COLOR_A
-            );
             program.ClearBuffers();
 
             // Update scene (all entities and their components)

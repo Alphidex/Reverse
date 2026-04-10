@@ -110,7 +110,7 @@ namespace Config {
         
         // Default log level (0=DEBUG, 1=INFO, 2=WARNING, 3=ERROR)
         // Set to INFO for normal operation, DEBUG for development
-        constexpr int DEFAULT_LOG_LEVEL = 1; // INFO
+        constexpr int DEFAULT_LOG_LEVEL = 0; // INFO
     }
 
 } // namespace Config

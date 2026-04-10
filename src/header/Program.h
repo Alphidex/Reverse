@@ -59,5 +59,4 @@ public:
 
 private:
     GLFWwindow* window; ///< GLFW window handle
-    bool ERROR;          ///< Initialization error flag
 };

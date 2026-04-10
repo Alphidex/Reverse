@@ -21,9 +21,7 @@ target_sources(Reverse PRIVATE
     Camera.cpp
     Light.cpp
     Model.cpp
-    Drawable.cpp
     Program.cpp
-    Interface.cpp
     Logger.cpp
     ResourceManager.cpp
     Material.cpp

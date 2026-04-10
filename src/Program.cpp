@@ -9,7 +9,7 @@
 #include <stdexcept>
 
 // Callback Functions
-void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void resizeWindowCallback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 
 Program::Program(int width, int height)
@@ -47,15 +47,13 @@ Program::Program(int width, int height)
     glViewport(0, 0, width, height);
 
     // Callback + Settings
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetFramebufferSizeCallback(window, resizeWindowCallback);
     glfwSwapInterval(Config::Window::ENABLE_VSYNC ? 1 : 0);
 
     // Enable depth testing and stencil testing
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_STENCIL_TEST);
     glStencilMask(0x000F);
-    
-    ERROR = false;
 }
 
 void Program::ProcessEvents()
@@ -87,7 +85,7 @@ GLFWwindow* Program::GetWindow() const {
     return window;
 }
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void resizeWindowCallback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
 } 
