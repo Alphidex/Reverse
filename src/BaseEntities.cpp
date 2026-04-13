@@ -3,6 +3,5 @@
 Quad::Quad()
 {
     auto cube = Entity("Cube");
-    
 }
 

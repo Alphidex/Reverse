@@ -34,75 +34,6 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 
-// Plane mesh data
-vector<Vertex> planeVertices = {
-    {{-5.0f, -0.5f, -5.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 2.0f}},
-    {{ 5.0f, -0.5f, -5.0f}, {0.0f, 1.0f, 0.0f}, {2.0f, 2.0f}},
-    {{ 5.0f, -0.5f,  5.0f}, {0.0f, 1.0f, 0.0f}, {2.0f, 0.0f}},
-    {{-5.0f, -0.5f,  5.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}}
-};
-
-vector<unsigned int> planeIndices = {
-    0, 1, 2,
-    2, 3, 0
-};
-
-// Cube vertex data
-vector<Vertex> cubeVertices = {
-    // Front face (Z+)
-    {{-0.5f, -0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}},
-    {{ 0.5f, -0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f}},
-    {{ 0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-    {{-0.5f,  0.5f,  0.5f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
-    
-    // Back face (Z-)
-    {{ 0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {0.0f, 0.0f}},
-    {{-0.5f, -0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {1.0f, 0.0f}},
-    {{-0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {1.0f, 1.0f}},
-    {{ 0.5f,  0.5f, -0.5f}, {0.0f, 0.0f, -1.0f}, {0.0f, 1.0f}},
-    
-    // Left face (X-)
-    {{-0.5f, -0.5f, -0.5f}, {-1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-    {{-0.5f, -0.5f,  0.5f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
-    {{-0.5f,  0.5f,  0.5f}, {-1.0f, 0.0f, 0.0f}, {1.0f, 1.0f}},
-    {{-0.5f,  0.5f, -0.5f}, {-1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}},
-    
-    // Right face (X+)
-    {{ 0.5f, -0.5f,  0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-    {{ 0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
-    {{ 0.5f,  0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {1.0f, 1.0f}},
-    {{ 0.5f,  0.5f,  0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 1.0f}},
-    
-    // Top face (Y+)
-    {{-0.5f,  0.5f,  0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f}},
-    {{ 0.5f,  0.5f,  0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
-    {{ 0.5f,  0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 1.0f}},
-    {{-0.5f,  0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {0.0f, 1.0f}},
-    
-    // Bottom face (Y-)
-    {{-0.5f, -0.5f, -0.5f}, {0.0f, -1.0f, 0.0f}, {0.0f, 0.0f}},
-    {{ 0.5f, -0.5f, -0.5f}, {0.0f, -1.0f, 0.0f}, {1.0f, 0.0f}},
-    {{ 0.5f, -0.5f,  0.5f}, {0.0f, -1.0f, 0.0f}, {1.0f, 1.0f}},
-    {{-0.5f, -0.5f,  0.5f}, {0.0f, -1.0f, 0.0f}, {0.0f, 1.0f}}
-};
-
-// Cube faces
-vector<unsigned int> cubeIndices = {
-    // Front face
-    0, 1, 2,  2, 3, 0,
-    // Back face
-    4, 5, 6,  6, 7, 4,
-    // Left face
-    8, 9, 10,  10, 11, 8,
-    // Right face
-    12, 13, 14,  14, 15, 12,
-    // Top face
-    16, 17, 18,  18, 19, 16,
-    // Bottom face
-    20, 21, 22,  22, 23, 20
-};
-
-
 /// Entry point for the application
 /// Initializes OpenGL context, camera, shaders, and main render loop
 int main(){
@@ -125,7 +56,7 @@ int main(){
         auto shaderProgram = resourceManager.loadShader(Config::Shaders::DEFAULT_VERTEX, Config::Shaders::DEFAULT_FRAGMENT);
         vector<std::shared_ptr<Shader>> shaderList = {shaderProgram};
         
-        // Load textures using ResourceManager (must be after OpenGL context is created)
+        // Load textures using ResourceManager
         auto marbleTexture = resourceManager.loadTexture("./resource/textures/marble.jpg", "diffuse");
         auto wallTexture = resourceManager.loadTexture("./resource/textures/wall.jpg", "diffuse");
         
@@ -141,11 +72,6 @@ int main(){
         wallMaterial->setDiffuseColor(glm::vec3(0.9f, 0.9f, 0.9f));
         wallMaterial->setSpecularColor(glm::vec3(0.3f, 0.3f, 0.3f));
         wallMaterial->setShininess(32.0f);
-        
-        // Create meshes with materials
-        Mesh cube(cubeVertices, cubeIndices, marbleMaterial);
-        Mesh cube2(cubeVertices, cubeIndices, marbleMaterial);
-        Mesh plane(planeVertices, planeIndices, wallMaterial);
 
         // ===== NEW: Entity/Component System Demo =====
         // Create a scene to manage entities
@@ -191,11 +117,6 @@ int main(){
 
             // Update scene (all entities and their components)
             mainScene.update(deltaTime);
-
-            // Render old meshes (legacy system)
-            cube.draw();
-            cube2.draw(glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f)));
-            plane.draw();
             
             // Render entities using new system
             for (const auto& entity : mainScene.getEntities()) {
